@@ -1,796 +1,1881 @@
-# 강현호 <h1>202130202
+# 강현호 202130202
 
-## 3월 15일 Java2 강의
-깃 허브 주소를 복사하여 vscode에 붙여넣은뒤 깃 허브를 활용하는 방법에 대해 배웠다.
-source control에 내용을 넣은 뒤 commit을 누른 뒤 업로드를 하면 깃 허브에 업로드가 된다.
-java 개발 환경 구축
-openJDK 설치, Eclips 설치, Eclips에 openJDK 연결
-자바 프로젝트 생성
+## 6월 14일
+**자바의 입출력 스트림**
+* 입출력 장치와 자바 응응 프로그램 연결  
+    * 입력 스트림 : 입력 장치로부터 자바 프로그램으로 데이터를 전달하는 객체  
+    * 출력 스트림 : 자바 프로그램에서 출력 장치로 데이터를 보내는 객체
 
-## 3월 22일 Java2 강의
-자바 프로젝트, 클래스 생성 후 소스 편집, 컴파일 및 실행
-자바 응용프로그램의 종류
-- 데스크톱 응용프로그램
-- 자바 서블릿 응용프로그램
-- 모바일 응용프로그램
+**자바의 입출력 스트림 종류**
+* 문자 스트림
+    * 문자만 입출력하는 스트림
+    * 문자가 아닌 바이너리 데이터는 스트림에서 처리하지 못함
+    * 문자가 아닌 데이터를 문자 스트림으로 출력하면 깨진 기호가 출력
+    * 바이너리 파일을 문자 스트림으로 읽으면 읽을 수 없는 바이트가 생겨서 오류 발생    
 
-Java 특징
-플랫폼 독립성, 객체 지향, 클래스로 캡슐화, 소스와 클래스파일, 실행 코드 배포, 패키지, 멀티스레드, 가비지 컬렉션,
-프로그램 작성이 쉽다, 실행 속도를 개선하기 위해 JIT 컴파일러가 사용된다.
+* 바이트 스트림  
+    * 입출력 데이터를 단순 바이트의 흐름으로 처리  
+    * 문자 데이터 든 바이너리 데이터든 상관없이 처리 가능  
+        예: 바이너리 파일을 읽는 입력 스트림
 
-자바 프로그램의 구조
-- 클래스 만들기
-- 주석문
-- main() 메소드
-- 메소드, 메소드 호출
-- 변수 선언
-- 문장
-- 화면 출력
+**스트림 연결**
+* 여러 개의 스트림을 연결하여 사용할 수 있음  
 
-식별자: 클래스, 변수, 상수, 메소드에 붙이는 이름(identifier)
-식별자 이름 규칙에서 식별자를 만들 때 규칙을 준수 해야 함.
-1. 식별자로 한글을 사용하면 안됨.
-2. 길이 제한이 없음.
-3. 대소문자 구별.
+**문자 스트림으로 텍스트 파일 읽기**
+* 텍스트 파일을 읽기 위해 문자 스트림 FileReader 클래스 이용  
+1. 파일 입력 스트림 생성(파일 열기)
+    * 스트림을 생성하고 파일을 열어 스트림과 연결
+    ~~~java
+    FileReader fin = new FileReader("c:\\test.txt");
+    ~~~
+2. 파일 읽기
+    * read()로 문자 하나 씩 파일에서 읽음
+    ~~~java
+    int c;
+    while((c = fin.read()) != -1) { // 문자를 c에 읽음. 파일 끝까지 반복
+        System.out.print((char)c); // 문자 c 화면에 출력
+    }
+    ~~~
+3. 스트림 닫기
+    * 스트림이 더 이상 필요 없으면 닫아야 함. 닫힌 스트림에서는 읽을 수 없음
+    * close()로 스트림 닫기
+    ~~~java
+    fin.close();
+    ~~~
 
-## 3월 29일 java2 강의
-타입 변환이란 변수나 상수 혹은 리터럴을 다른 타입을 변환하는것을 말한다.
-- 자동타입 변환: 치환문이나 수식 내에서 타입이 일치하지 않을때 컴파일러는 작은 타입을 큰 타입으로 자동변환
-- 강제타입 변환(캐스팅) : 큰 타입을 작은 타입으로 변환해야 할때 자동 변환 대신 컴파일 오류 발생 손실이 발생한다는 사실을 알고 변환한다면 강제로()안에 타입을 지정
+**파일 입출력과 예외 처리**
+* 파일 입출력 동안 예외 발생 가능  
+    * 스트림 생성 동안 : FileNotFoundException 발생 가능  
+        * 파일의 경로명이 틀리거나, 디스크의 고장 등으로 파일을 열 수 없음  
+    * 파일 읽기, 쓰기, 닫기를 하는 동안 : IOException 발생 가능
+        * 디스크 오동작, 파일이 중간에 깨진 경우, 디스크 공간이 모자라서 파일 입출력 불가
+* try-catch 블록 반드시 필요
+    * 자바 컴파일러의 강제 사항
 
-자바의 키 입력
-- System.in
-표준 입력 스트림 객체로, 키 값을 바이트 정보로 바꾸어 제공하는 저수준 스트림 객체
+**문자 스트림으로 텍스트 파일 쓰기**
+* 텍스트 파일에 쓰기 위해 문자 스트림 FileWriter 클래스 이용  
+1. 파일 출력 스트림 생성(파일 열기)
+2. 파일 쓰기
+3. 스트림 닫기
 
-Scanner을 이용한 키 입력 
-- scanner 객체는 다음과 같이 생성한다.
-"scanner scanner - new scanner(system.in);"
-- Scanner을 사용하기 위해서는 프로그램의 맨 앞줄에 "import" 문이 필요하다.
-"import java.util.Scanner;"
-import문은 scanner 클래스의 경로명이 java.utill.scanner임을 알려준다
+**바이트 스트림으로 바이너리 파일 쓰기**
+1. 파일 출력 스트림 생성(파일 열기)
+2. 파일 쓰기
+3. 스트림 닫기
+## 6월 7일
+**스윙 컴포넌트 그리기, paintComponent()**
+* 스윙의 페인팅 기본  
+    * 모든 컴포넌트는 자신의 모양을 스스로 그린다.
+    * 컨테이너는 자신을 그린 후 그 위에 자식 컴포넌트들에게 그리기 지시
+    * 모든 스윙 컴포넌트는 자신의 모양을 그리는 paintComponent() 메소드 보유
 
-예제 2-5 연습
+**paintComponent()의 오버라이딩과 JPanel**  
+* paintComponent(Graphic g)의 오버라이딩
+    * 개발자가 JComponent를 상속받아 새로운 컴포넌트 설계  
+    * 기존 컴포넌트의 모양에 변화를 주고자 할 때  
 
-식과 연산자
-- 주어진 식을 계산하여 결과를 얻어내는 과정을 연산이라고 한다
+* JPanel
+    * 비어 있는 컨테이너  
+    * 개발자가 다양한 GUI를 창출할 수 있는 캔버스로 적합  
+    * JPanel을 상속받아 개발자 임의의 모양을 가지는 패널로 많이 사용
 
-산술연산
-- 수직 계산에 사용하는 산술 연산자는 더하기,빼기, 곱하기, 나누기, 나머지(%)의 5갸더 /는 몫을 구하여, %는 나머지를 구한다
+**그래픽 기반 GUI 프로그래밍**
+* 그래픽 기반 GUI 프로그래밍  
+    * 스윙 컴포넌트에 의존하지 않고 선, 원 이미지 등을 이용하여 직접 화면  
+    을 구성하는 방법  
+    * 그래픽 기반 GUI 프로그래밍의 학습이 필요한 이유
+        * 컴포넌트의 한계를 극복하고 차트, 게임 등 자유로운 콘텐트 표현  
+        * 그래픽은 컴포넌트에 비해 화면 출력 속도가 빠름  
+        * 스윙 컴포넌트들로 모두 그래픽으로 작성되어 있어, 그래픽에 대한 학습은 자  
+        바 GUI의 바탕 기술을 이해하는데 도움
+        * 그래픽을 이용하여 개발자 자신만의 컴포넌트 개발  
 
-예제 2-6 연습
+**Graphics와 문자열 출력**
+* Graphics의 기능  
+    * 색상 선택하기  
+    * 문자열 그리기  
+    * 도형 그리기  
+    * 도형 칠하기  
+    * 이미지 그리기  
+    * 클리핑  
 
-증강연산
--  ++,-- 피연산자의 앞 또는 뒤에 붙어 값을 1 증가시키거나 1 감소시킨다.
-a++ a를 1 증가하고 증가전의 값 변환
-++a a를 1증가하고 증가된 값 변환
-a-- a를 1 가모하고 감소 전의 값 변환
---a a를 1 감소하고 감소된 값 변환
+**도형 그리기와 칠하기**
+* 도형 그리기  
+    * 선, 타원, 사각형, 둥근 모서리 사각형, 원호, 폐 다각형 그리기  
+    * 선의 굵기 조절할 수 없음  
 
-대입 연산 
-- 연산자의 오른쪽 식의 결과를 왼쪽에 있는 변수에 대입
+* 도형 칠하기
+    * 도형을 그리고 내부를 칠하는 기능
+        * 도형의 외곽선과 내부를 따로 칠하는 기능 없음
+    * 도형 칠하기를 위한 메소드
+        * 그리기 메소드 명에서 draw 대신 fill로 이름 대치하면 됨. fillRect(), fillOval() 등
 
-비교연산, 논리 연산
-- 비교연산자는 두 개의 피연산자를 비교하여 true 또는 false의 논리 결과를 내는 연산자
-- 논리 연산자는 논리 값을 대상으로 AND,OR,XOR,NOT의 논리 연산을 하여 논리 값을 내는 연산자
+**스윙에서 이미지를 그리는 2 가지 방법**
+1. JLabel을 이용한 이미지 그리기  
+* 장점 : 이미지 그리기 간편 용이  
+* 단점 : 이미지의 원본 크기대로 그리므로 이미지 크기 조절 불가  
 
-조건문
-- 단순 IF문 조건식은 비교 연산이나 논리 연산의 혼합된 식으로 구성되며 결과는 불린 값이다.
-- 조건식이 참이면 if 내부의 실행 문장이 실행되며 거짓이면 if문을 벗어난다
-- 다중 if-else 문은 if의 '조건식'이 참인 경우와 거짓인 경우에 실행할 문장을 각각 지시한다
+2. Graphics의 drawImage()로 이미지 출력  
+* 장점 : 이미지 일부분 등 이미지의 원본 크기와 다르게 그리기 가능  
+* 단점 : 컴포넌트로 관리할 수 없음 이미지의 위치나 크기 등을 적절히 조절하는 코딩 필요  
 
-## 4월 05일 java2 강의
-2차원 배열
-- 2차원 배열의 선언과 생성
-1차원 배열과 마찬가지로 2차원 배열에서도 레퍼런스 변수 선언 후 배열을 생성하며, 2차원 배열의 레퍼런스 변수를 선언
-int inArray[][]; 또는 int [][] intArray; // 2차원 배열의 레퍼런스 변수 선언
-intArray = new int[2][5]; // 2행 5열(2*5)의 2차원 배열 생성
+**repaint()**
+* repaint()  
+    * 모든 컴포넌트가 가지고 있는 메소드  
+    * 자바 플랫폼에게 컴포넌트 그리기를 강제 지시하는 메소드  
+    * repaint()를 호출하면, 자바 플랫폼이 컴포넌트의 paintComponent() 호출  
 
-2차원 배열의 초기화
-- 2차원 배열을 선언할 때 각 원소를 초기화 할 수 있다. 자동으로 초기화된 배열이 생성된다.
-int inArray[][] = { {0,1,2}, {3,4,5}, {6,7,8} }; // 3*3 배열 생성
-char charArray[][] = { {'a','b','c'}, {'d','e','f'} }; // 2*3 배열 생성
-double doubleArray[][] = { {0.01,0.02}, {0.03,0.04} }; // 2*2 배열 생성
+* repaint()의 호출이 필요한 경우  
+    * 개발자가 컴포넌트를 다시 그리고자 하는 경우  
+        * 프로그램에서 컴포넌트의 모양과 위치를 변경하고 바로 화면에 반영시키고자 하는 경우  
+        * 컴포넌트가 다시 그려져야 그 때 변경된 위치에 변경된 모양으로 출력됨  
+        * repaint()는 자바 플랫폼에게 지금 당장 컴포넌트를 다시 그리도록 지시함  
 
-자바의 예외 처리
-예외한 실행 중 오동작이나 결과에 악영향을 미치는 예상치 못한 상황 발생을 예외라고 한다.
-- 예외 발생 사례
-정수를 0으로 나누는 경우
-배열의 크기보다 큰 인덱스로 배열의 원소를 접근하는 경우
-정수를 읽는 코드가 실행되고 있을 때 사용자가 문자를 입력한 경우
+* 부모 컴포넌트부터 다시 그리는 것이 좋음  
+    * 컴포넌트 repaint()가 불려지면  
+        * 이 컴포넌트는 새로운 위치에 다시 그려지지만 이전의 위치에 있던 자신의 모양이 남아 있음  
+    * 부모 컴포넌트의 repaint()를 호출하면  
+        * 부모 컨테이너의 모든 내용을 지우고 자식을 다시 그리기 때문에 컴포넌트의 이전 모양이 지워 지고 새로 변경된 크기나 위치에 그려짐  
 
-자바의 예외 처리,try-catch-finally 문
-예외 처리란 발생한 예외에 대해 개발자가 작성한 프로그램 내에서 대응하는 것을 말한다. 자바는 예외 처리시 try,catch,finally문을 사용
-try {
-    예외가 발생할 가능성이 있는 실행문(try 블록)
+**스레드와 운영체제**  
+* 스레드(thread)  
+    * 운영체제에 의해 관리되는 하나의 작업 혹은 태스크  
+    * 스레드와 태스크(혹은 작업)은 바꾸어 사용해도 무관  
+* 멀티스레딩(multi-threading)  
+    * 여러 스레드를 동시에 실행시키는 응용프로그램을 작성하는 기법  
+* 스레드 구성  
+    * 스레드 코드  
+        * 작업을 실행하기 위해 작성한 프로그램 코드  
+        * 개발자가 작성  
+    * 스레드 정보  
+        * 스레드 명, 스레드 ID, 스레드의 실행 소요 시간, 스레드의 우선 순위 등  
+        * 운영체제가 스레드에 대해 관리하는 정보  
+
+**멀티태스킹과 멀티스레딩**
+* 멀티태스킹 구현 기술  
+    * 멀티프로세싱(multi-processing)  
+        * 하나의 응용프로그램이 여러 개의 프로세스를 생성하고, 각 프로세스가 하나의 작업을 처리하는 기법  
+        * 각 프로세스 독립된 메모리 영역을 보유하고 실행  
+        * 프로세스 사이의 문맥 교환에 따른 과도한 오버헤드와 시간 소모의 문제점  
+    * 멀티스레딩(multi-threading)  
+        * 하나의 응용프로그램이 여러 개의 스레드를 생성하고, 각 스레드가 하나의 작업을 처리하는 기법  
+        * 하나의 응용프로그램에 속한 스레드는 변수 메모리, 파일 오픈 테이블 등 자원으로 공유하므로, 문맥 교환에 따른 오버헤드가 매주 작음  
+        * 현재 대부분의 운영체제가 멀티스레딩을 기본으로 하고 있음  
+
+**자바 스레드(Thread)와 JVM**    
+* 자바 스레드  
+    * 자바 가상 기계(JVM)에 의해 스케쥴되는 실행 단위의 코드 블럭  
+    * 스레드의 생명 주기는 JVM에 의해 관리됨 : JVM은 스레드 단위로 스케쥴링  
+
+* JVM과 자바의 멀티스레딩  
+    * 하나의 JVM은 하나의 자바 응용프로그램만 실행  
+        * 자바 응용프로그램이 시작될 때 JVM이 함께 실행됨  
+        * 자바 응용프로그램이 종료하면 JVM도 함께 종료함  
+* 응용프로그램은 하나 이상의 스레드로 구성 가능 
+
+**Thread 클래스를 상속받아 스레드 만들기**  
+* Thread를 상속받아 run() 오버라이딩  
+    * Thread 클래스 상속. 새 클래스 작성  
+    * run() 메소드 작성  
+        * run() 메소드를 스레드 코드라고 부름  
+        * run() 메소드에서 스레드 실행 시작 
+
+* 스레드 객체 생성  
+    * 생성된 객체는 필드와 메소드를 가진 객체일 뿐 스레드로 작동하지 않음  
+
+* 스레드 시작  
+    * start() 메소드 호출  
+        * 스레드로 작동 시작  
+        * 스레드 객체의 run()이 비로소 실행  
+        * JVM에 의해 스케쥴되기 시작함  
+
+**Runnable 인터페이스로 스레드 만들기**
+* Runnable 인터페이스 구현하는 새 클래스 작성  
+    * run() 메소드 구현  
+        * run() 메소드를 스레드 코드라고 부름  
+        * run() 메소드에서 스레드 실행 시작 
+
+* 스레드 시작  
+    * start() 메소드 호출  
+        * 스레드로 작동 시작  
+        * 스레드 객체의 run()이 비로소 실행  
+        * JVM에 의해 스케쥴되기 시작함  
+
+**main 스레드**
+* main 스레드
+    * JVM이 응용프로그램을 실행할 때 디폴트로 생성되는 스레드
+        * main() 메소드 실행 시작
+        * main() 메소드가 종료하면 main 스레드 종료
+
+**스레드 종료와 타 스레드 강제 종료**
+* 스스로 종료
+    * run() 메소드 리턴
+
+* 타 스레드에서 강제 종료
+    * interrupt() 메소드 사용
+
+**스레드 동기화(Thread Synchronization)**
+* 멀티스레드 프로그램 작성시 주의점  
+    * 다수의 스레드가 공유 데이터에 동시에 접근하는 경우  
+        * 공유 데이터의 값에 예상치 못한 결과 발생 가능  
+* 스레드 동기화  
+    * 동기화란?  
+        * 스레드 사이의 실행순서 제어, 공유데이터에 대한 접근을 원활하게 하는 기법  
+* 멀티스레드의 공유 데이터의 동시 접근 문제 해결  
+    * 방법1) 공유 데이터를 접근하는 모든 스레드의 한 줄 세우기  
+    * 방법2) 한 스레드가 공유 데이터에 대한 작업을 끝낼 때까지 다른 스레드가 대기 하도록 함  
+* 자바의 스레드 동기화 방법 - 2가지  
+    * synchronized 키워드로 동기화 블록 지정  
+    * wait()-notify() 메소드로 스레드의 실행 순서 제어  
+
+**synchronized 블록 지정**
+* synchronized 키워드  
+    * 스레드가 독점적으로 실행해야 하는 부분(동기화 코드)을 표시하는 키워드  
+        * 임계 영역(criitical section) 표기 키워드  
+    * synchronized 블록 지정 방법  
+        * 메소드 전체 혹은 코드 블록  
+* synchronized 블록이 실행될 때,  
+    * 먼저 실행한 스레드가 모니터 소유  
+        * 모니터란 해당 객체를 독점적으로 사용할 수 있는 권한  
+    * 모니터를 소유한 스레드가 모니터를 내놓을 때까지 다른 스레드 대기  
+
+**wait()-notify()를 이용한 스레드 동기화**  
+* wait()-notify()가 필요한 경우  
+    * 공유 데이터로 두 개 이상의 스레드가 데이터를 주고 받을 때  
+    * producer-consumer문제  
+* 동기화 메소드  
+    * wait() : 다른 스레드가 notify()를 불러줄 때까지 기다린다.  
+    * notify() : wait()를 호출하여 대기중인 스레드를 깨운다.  
+        * wait(), notify()는 Object의 메소드  
+
+## 5월 31일
+**스윙 컴포넌트의 공통 메소드, JComponent의 메소드**
+* JComponent
+    * 스윙 컴포넌트는 모두 상속받는 슈퍼 클래스, 추상 클래스  
+    * 스윙 컴포넌트들이 상속받는 공통 메소드와 상수 구현  
+    * JComponent의 주요 메소드 사례  
+~~~java
+//컴포넌트의 모양과 관련된 메소드
+void setForeground(Color) //전경색 설정
+void setBackground(Color) //배경색 설정
+void setOpaque(boolean) //불투명성 설정
+void setFont(Font) //폰트 설정
+Font getFont()  // 폰트 리턴
+
+//컴포넌트 위치와 크기에 관련된 메소드
+int getWidth() //폭 리턴
+int getHeight() //높이 리턴
+int getX() //x 좌표 리턴
+int getY() //y 좌표 리턴
+Point getLocationOnScreen() //스크린 좌표상에서의 컴포넌트 좌표
+void setLocation(int, int) //위치 지정
+void setSize(int, int) //크기 지정
+
+//컴포넌트 상태와 관련된 메소드
+void setEnabled(boolean) //컴포넌트 활성화/비활성화
+void setVisible(boolean) //컴포넌트 보이기/숨기기
+boolean isVisible() //컴포넌트의 보이는 상태 리턴
+
+//컨테이너를 위한 메소드
+Component add(Component) //자식 컴포넌트 추가
+void remove(Component) //자식 컴포넌트 제거
+void removeAll() //모든 자식 컴포넌트 제거
+Component[] getComponents() //자식 컴포넌트 배열 리턴
+Container getParent() //부모 컨테이너 리턴
+Container getTopLevelAncestor() //최상위 부모 컨테이너 리턴
+~~~
+
+**JButton으로 버튼 만들기**
+* JButton의 용도 
+    * 버튼 모양의 컴포넌트. 사용자로부터 명령을 입력 받기 위한 목적  
+    * 버튼은 클릭될 때 Action 이벤트 발생
+
+* 버튼 생성
+~~~java
+JButton() //빈 버튼
+JButton(Icon image) //이미지 버튼
+JButton(String text) //문자열 버튼
+JButton(String text, Icon image) //문자열과 이미지 모두 가진 버튼
+~~~
+
+**이미지 버튼 만들기**
+* 하나의 버튼에 3 개의 이미지 등록  
+    * 마우스 조작에 따라 3 개의 이미지 중 적절한 이미지 자동 출력  
+* 3 개의 버튼 이미지  
+    * normalIcon
+        * 버튼의 보통 상태(디폴트) 때 출력되는 이미지  
+        * 생성자에 이미지 아이콘 전달 혹은 JButton의 setIcon(normalIcon);  
+    * rolloverIcon  
+        * 버튼에 마우스가 올라갈 때 출력되는 이미지  
+        * 이미지 설정 메소드 : JButton의 setRolloverIcon(rolloverIcon);  
+    * pressedIcon  
+        * 버튼을 누른 상태 때 출력되는 이미지  
+        * 이미지 설정 메소드 : JButton의 setPressedIcon(pressedIcon);
+
+**JCheckBox로 체크박스 만들기**
+* JCheckBox의 용도
+    * 선택(selected)과 비선택(deselected)두 상태만 가지는 버튼
+* 체크박스 생성
+~~~java
+JCheckBox() //빈 체크박스
+JCheckBox(Icon image) //이미지 체크박스
+JCheckBox(Icon image, boolean selected) //이미지 체크박스
+JCheckBox(String text, Icon image) //문자열과 이미지를 가진 체크박스
+JCheckBox(String text, Icon image, boolean selected) //문자열과 이미지 체크박스
+// selected:true면 선택 상태로 초기화
+~~~
+
+**체크박스에 Item 이벤트 처리**
+* Item 이벤트
+    * 체크 박스의 선택 상태에 변화가 생길 때 발생하는 이벤트
+        * 사용자가 마우스나 키보드로 체크박스를 선택/해제할 때
+        * 프로그램에서 체크박스를 선택/해제하여 체크 상태에 변화가 생길 때
+        ~~~java
+        JCheckBox c = new JCheckBox("사과");
+        c.setSelected(true); // 선택 상태로 변경
+        ~~~
+    * 이벤트가 발생하면 ItemEvent 객체 생성
+    * ItemListner 리스너를 이용하여 이벤트 처리
+
+**JRadioButton으로 라디오버튼 만들기**  
+* JRadioButton의 용도  
+    * 버튼 그룹을 형성하고, 그룹에 속한 버튼 중 하나만 선택되는 라디오버튼  
+    * 체크박스와의 차이점  
+        * 체크 박스는 각각 선택/해제가 가능하지만, 라디오버튼은 그룹에 속한 버튼 중 하나만 선택
+
+* 라디오버튼 생성
+~~~java
+JRadioButton() //빈 라디오버튼
+JRadioButton(Icon image) //이미지 라디오버튼
+JRadioButton(Icon image, boolean selected) //이미지 라디오버튼
+JRadioButton(String text) //문자열 라디오버튼
+JRadioButton(String text, boolean selected) //문자열 라디오버튼
+JRadioButton(String text, Icon image) //문자열과 이미지를 가진 라디오버튼
+JRadioButton(String text, Icon image, boolean selected) //문자열과 이미지를 가진 라디오버튼
+~~~
+
+**라디오버튼 생성 및 Item 이벤트 처리**
+* 버튼 그룹과 라디오버튼 생성 과정
+1. 버튼 그룹 객체 생성
+2. 라디오버튼 생성
+3. 라디오버튼을 버튼 그룹에 삽입
+4. 라디오버튼을 컨테이너에 삽입
+
+* 라디오버튼에 Item 이벤트 처리 : ItemListener 리스너 이용  
+    * 라디오버튼이 선택/해제되어 상태가 달라지면, Item 이벤트 발생  
+        * 사용자가 마우스나 키보드로 선택 상태를 변경할 때  
+        * 프로그램에서 JRadioButton의 setSelected()를 호출하여 선택 상태를 변경할 때  
+**JTextField로 한 줄 입력 창 만들기**
+* JTextField
+    * 한 줄의 문자열을 입력 받는 창(텍스트필드)
+        * 텍스트 입력 도중 Enter키가 입력되면 Action 이벤트 발생
+        * 입력 가능한 문자 개수와 입력 창의 크기는 서로 다름
+
+* 텍스트필드 생성
+~~~java
+JTextField() //빈 텍스트필드
+JTextField(int cols) //입력 창의 열의 개수는 cols개인텍스트필드
+JTextField(String text) // text 문자열로 초기화된 텍스트필드
+JTextField(String text, int cols) //입력 창의 열의 개수는 cols개이고 text 문자열로 초기화된 텍스트필드 
+~~~
+
+**TextArea로 여러 줄의 입력 창 만들기**
+* JTextArea
+    * 여러 줄의 문자열을 입력받을 수 있는 창(텍스트영역)
+        * 스크롤바를 지원하지 않는다.
+        * JScrollPane 객체에 삽입하여 스크롤바 지원받음  
+
+* 생성자
+~~~java
+JTextArea() //빈 텍스트영역 
+JTextArea(int rows, int cols) //입력 창이 rows x cols개의 문자 크기인 텍스트영역 
+JTextArea(String text) //text 문자열로 초기화된 텍스트영역 
+JTextArea(String text, int rows, int cols) //입력 창이 rows x cols개의 문자 크기이며 text 문자열로 초기화된 텍스트영역 
+~~~
+
+**JList E**
+* JList E
+    * 하나 이상의 아이템을 보여주고 아이템을 선택하도록 하는 리스트  
+    * Java 7부터 제네릭 리스트로 바뀜
+        * E에 지정된 타입의 객체만 저장하는 리스트
+    * JScrollPane에 JList E를 삽입하여 스크롤 가능
+
+* 리스트 생성
+~~~java
+JList<E>() //빈 리스트
+JList<E>(Vectorr listData) //벡터로부터 아이템을 공급받는 리스트
+JList<E>(Object [] listData) //배열로부터 아이템을 공급받는 리스트
+~~~
+
+**JComboBox E**
+
+* JComboBox<E>
+    * 텍스트필드와 버튼, 그리고 드롭다운 리스트로 구성되는 콤보박스  
+    * 드롭다운 리스트에서 선택한 것이 텍스트필드에 나타남  
+
+* 콤보박스 생성
+~~~java
+JComboBox<E>() //빈 콤보박스
+JComboBox<E>(Vector listData) //벡터로부터 아이템을 공급받는 콤보박스
+JComboBox<E>(Object [] listData) //배열로부터 아이템을 공급받는 콤보박스
+~~~
+  
+**메뉴 구성**  
+* 메뉴 만들기에 필요한 스윙 컴포넌트  
+    * 메뉴아이템 – JMenuItem  
+    * 메뉴 – JMenu  
+        * 여러 개의 메뉴 아이템을 가짐  
+    * 메뉴바 – JMenuBar  
+        * 여러 개의 메뉴를 붙이는 바이며, 프레임에 부착됨  
+    * 분리선  
+        * 메뉴아이템 사이의 분리선으로 separator라고 부름  
+        * JMenu의 addSeparator()를 호출하여 삽입함
+
+**메뉴아이템에 Action 이벤트 달기**
+* 메뉴아이템을 클릭하면 Action 발생
+    * 메뉴아이템은 사용자로부터 지시나 명령을 받는데 사용
+    * ActionListener 인터페이스로 리스너 작성
+    * 각 메뉴아이템마다 이벤트 리스너 설정  
+
+**팝업 다이얼로그, JOptionPane**  
+* 팝업 다이얼로그
+    * 사용자에게 메시지를 전달하거나 문자열을 간단히 입력받는 용도
+    * JOptionPane 클래스를 이용하여 생성
+        * static 타입의 간단한 메소드 이용
+* 입력 다이얼로그 - JOptionPane.showInputDialog()
+    * 한 줄을 입력 받는 다이얼로그
+
+**확인 다이얼로그**
+* 확인 다이얼로그 - JOptionPane.showConfirmDialog()
+    * 사용자로부터 Yes/No 응답을 입력 받는 다이얼로그
+
+**메시지 다이얼로그**
+* 메시지 다이얼로그 – showMessageDialog
+    * 단순 메시지를 출력하는 다이얼로그
+
+
+## 5월 24일
+**이벤트 기반 프로그래밍**  
+* 이벤트의 발생에 의해 프로그램 흐름이 결정되는 방식  
+    * 이벤트가 발생하면 이벤트를 처리하는 루틴(이벤트 리스너) 실행  
+    * 실행될 코드는 이벤트의 발생에 의해 전적으로 결정  
+* 반대되는 개념 : 배치 실행  
+    * 프로그램의 개발자가 프로그램의 흐름을 결정하는 방식  
+* 이벤트 종류  
+    * 사용자의 입력 : 마우스 드래그, 마우스 클릭, 키보드 누름 등  
+    * 센서로부터의 입력, 네트워크로부터 데이터 송수신  
+    * 다른 응용프로그램이나 다른 스레드로부터의 메시지  
+* 이벤트 기반 응용 프로그램의 구조  
+    * 각 이벤트마다 처리하는 리스너 코드 보유  
+* GUI 응용프로그램은 이벤트 기반 프로그래밍으로 작성됨  
+    * GUI 라이브러리 종류  
+        * C++의 MFC, C# GUI, Visual Basic, X Window, Android등  
+        * 자바의 AWT와 Swing  
+
+**자바 스윙 프로그램에서 이벤트 처리 과정**
+* 이벤트가 처리되는 과정  
+    * 이벤트 발생
+        * 예 : 마우스의 움직임 혹은 키보드입력  
+    * 이벤트 객체 생성  
+        * 현재 발생한 이벤트에 대한 정보를 가진 객체
+    * 응용프로그램에 작성된 이벤트 리스너 찾기  
+    * 이벤트 리스너 실행  
+        * 리스너에 이벤트 객체 전달  
+        * 리스너 코드 실행
+
+**이벤트 객체**  
+* 발생한 이벤트에 관한 정보를 가진 객체  
+* 이벤트 리스너에 전달됨  
+    * 이벤트 리스너 코드가 발생한 이벤트에 대한 상황을 파악할 수 있게 함  
+* 이벤트 객체가 포함하는 정보  
+    * 이벤트 종류와 이벤트 소스  
+    * 이벤트 발생한 화면 좌표 및 컴포넌트 내 좌표  
+    * 이벤트가 발생한 버튼이나 메뉴 아이템의 문자열  
+    * 클릭된 마우스 버튼 번호 및 마우스의 클릭 횟수  
+    * 키의 코드 값과 문자 값  
+    * 체크박스, 라디오버튼 등과 같은 컴포넌트에 이벤트가 발생하였다면 체크 상태  
+* 이벤트 소스를 알아 내는 메소드  
+    * Object getSource()
+        * 발생한 이벤트 소스 컴포넌트 리턴  
+        * Object 타입으로 리턴하므로 캐스팅하여 사용  
+        * 모든 이벤트 객체에 대해 적용  
+
+**리스너 인터페이스**  
+* 이벤트 리스너  
+    * 이벤트를 처리하는 자바 프로그램 코드, 클래스로 작성  
+* 자바는 다양한 리스너 인터페이스 제공 
+* 사용자의 이벤트 리스너 작성  
+    * 자바의 리스너 인터페이스(interface)를 상속받아 구현  
+    * 리스너 인터페이스의 모든 추상 메소드 구현  
+
+**이벤트 리스너 작성 과정 사례**
+1. 이벤트와 이벤트 리스너 선택
+    * 버튼 클릭을 처리하고자 하는 경우
+    * 이벤트 : Action 이벤트, 이벤트 리스너 : ActionListener
+2. 이벤트 리스너 클래스 작성 : ActionListener 인터페이스 구현  
+3. 이벤트를 받아 처리하고자 하는 컴포넌트에 이벤트 리스너 등록
+    * component.addXXXListener(listener)
+        * xxx : 이벤트 명, listener : 이벤트 리스너 객체  
+
+**이벤트 리스너 작성 방법**  
+* 3가지 방법
+    * 독립 클래스로 작성  
+        * 이벤트 리스너를 완전한 클래스로 작성  
+        * 이벤트 리스너를 여러 곳에서 사용할 때 적합  
+    * 내부 클래스(inner class)로 작성
+        * 클래스 안에 멤버처럼 클래스 작성  
+        * 이벤트 리스너를 특정 클래스에서만 사용할 때 적합  
+    * 익명 클래스(anoymous class)로 작성
+        * 클래스의 이름 없이 간단히 리스너 작성  
+        * 클래스 조차 만들 필요 없이 리스너 코드가 간단한 경우에 적합
+
+**독립 클래스로 Action 이벤트 리스너 만들기**
+~~~java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+    public class IndepClassListener extends JFrame {
+        public IndepClassListener() {
+        setTitle("Action 이벤트 리스너 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+        JButton btn = new JButton("Action");
+        
+        btn.addActionListener(new MyActionListener());
+        c.add(btn);
+        
+        setSize(250, 120);
+        setVisible(true);
+    }
+    public static void main(String [] args) {
+        new IndepClassListener();
+       }
+    }
+
+    class MyActionListener implements ActionListener {
+     public void actionPerformed(ActionEvent e) {
+        JButton b = (JButton)e.getSource();
+        if(b.getText().equals("Action"))
+             b.setText("액션");
+        else
+            b.setText("Action");
+        }
+    }
+~~~
+![Alt text](image-2.png)![Alt text](image-3.png)
+
+**내부 클래스로 Action 이벤트 리스너 만들기**
+~~~java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+    public class IndepClassListener extends JFrame {
+        public IndepClassListener() {
+        setTitle("Action 이벤트 리스너 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        Container c = getContentPane();
+        c.setLayout(new FlowLayout());
+        JButton btn = new JButton("Action");
+        btn.addActionListener(new MyActionListener());
+        c.add(btn);
+        
+        setSize(250, 120);
+        setVisible(true);
+    }
+
+   private class MyActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+           JButton b = (JButton)e.getSource();
+           if(b.getText().equals("Action"))
+                b.setText("액션");
+           else
+               b.setText("Action");
+        
+               IndepClassListener.this.setTitle(b.getText());
+            }
+       }
+    public static void main(String [] args) {
+        new IndepClassListener();
+       }
+    }
+~~~
+![Alt text](image-4.png)![Alt text](image-5.png)
+* 버튼의 문자열이 타이틀에 출력됨
+
+**어댑터 클래스**  
+* 이벤트 리스너에 구현에 따른 부담
+    * 리스너의 추상 메소드를 모두 구현해야 하는 부담  
+    * 예 : 마우스 리스너에서 마우스가 눌러지는 경우(mousePressed())만 처리하고자 하는 경우에
+도 나머지 4개의 메소드를 모두 구현해야 하는 부담  
+* 어댑터 클래스  
+    * 리스너의 모든 메소드를 단순 리턴하도록 만든 클래스  
+* 추상 메소드가 하나뿐인 리스너는 어댑터 없음  
+    * ActionAdapter, ItemAdapter 클래스는 존재하지 않음  
+
+**key 이벤트와 포커스**  
+* 키 입력 시, 다음 세 경우 각각 key 이벤트 발생  
+    * 키를 누르는 순간  
+    * 누른 키를 때는 순간  
+    * 누른 키를 때는 순간(Unicode 키의 경우에만)  
+* 키 이벤트를 받을 수 있는 조건  
+    * 모든 컴포넌트  
+    * 현재 포커스(focus)를 가진 컴포넌트가 키 이벤트 독점  
+* 포커스(focus)  
+    * 컴포넌트나 응용프로그램이 키 이벤트를 독점하는 권한  
+    * 컴포넌트에 포커스 설정 방법 : 다음 2 라인 코드 필요  
+~~~java
+component.setFocusable(true); // component가 포커스를 받을 수 있도록 설정
+component.requestFocus(); // component에 포커스 강제 지정
+~~~  
+* 자바플랫폼마다 실행 환경의 초기화가 서로 다를 수 있기 때문에 다음 코드가 필요함  
+**component.setFocusable(true);**
+
+**KeyListener**
+* 응용프로그램에서 KeyListener를 상속받아 키 리스너 구현
+* KeyListener의 3 개 메소드
+    * keyPressed
+    * keyReleased
+    * keyTyped  
+* 컴포넌트에 키 이벤트 리스너 달기  
+
+**유니코드(Unicode)키**  
+* 유니코드 키의 특징  
+    * 국제 산업 표준  
+    * 전 세계의 문자를 컴퓨터에서 일관되게 표현하기 위한 코드 체계  
+    * 문자들에 대해서만 키 코드 값 정의  
+        * A ~ Z, a ~ z, 0~9, !, @, & 등  
+    * 문자가 아닌 키 경우에는 표준화된 키 코드 값 없음  
+        * Function 키, Home 키, Up 키,Delete 키, Control 키, Shift
+키, Alt 등은 플랫폼에 따라 키 코드 값이 다를 수 있음  
+* 유니코드 키가 입력되는 경우  
+    * keyPressed(), keyTyped(), keyReleased() 가 순서대로 호출  
+* 유니코드 키가 아닌 경우  
+    * keyPressed(), keyReleased() 만 호출됨  
+
+**가상 키와 입력된 키 판별**
+* KeyEvent 객체  
+    * 입력된 키 정보를 가진 이벤트 객체  
+    * KeyEvent 객체의 메소드로 입력된 키 판별  
+* KeyEvent 객체의 메소드로 입력된 키 판별  
+    * char KeyEvent.getKeyChar()  
+        * 키의 유니코드 문자 값 리턴  
+        * Unicode 문자 키인 경우에만 의미 있음  
+        * 입력된 키를 판별하기 위해 문자 값과 비교하면 됨  
+    * int KeyEvent.getKeyCode()  
+        * 유니코드 키 포함  
+        * 모든 키에 대한 정수형 키 코드 리턴  
+        * 입력된 키를 판별하기 위해 가상키(Virtual Key) 값과 비교하여야 함  
+        * 가상 키 값은 KeyEvent 클래스에 상수로 선언  
+
+**KeyListener 활용 예제**
+~~~java
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class KeyCharEx extends JFrame {
+    private JLabel la =
+    new JLabel("<Enter>키로 배경색이 바뀝니다");
+
+    public KeyCharEx() {
+        super("KeyListener의 문자 키 입력 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container c = getContentPane();
+    
+        c.setLayout(new FlowLayout());
+        c.add(la);
+        c.addKeyListener(new MyKeyListener());
+    
+        setSize(250, 150);
+        setVisible(true);
+    
+        c.setFocusable(true);
+        c.requestFocus(); 
+    }
+class MyKeyListener extends KeyAdapter {
+    public void keyPressed(KeyEvent e) {
+        int r = (int) (Math.random() * 256);
+        int g = (int) (Math.random() * 256);
+        int b = (int) (Math.random() * 256);
+       
+        switch(e.getKeyChar()) { 
+        case '\n':
+            la.setText("r=" + r + ", g=" + g + ", b=" + b);
+            getContentPane().setBackground(
+            new Color(r, g, b));
+            break;
+            
+            case 'q':
+            System.exit(0);
+        }
+    }
 }
-catch (처리할 예외 타입 선언){
-    예외 처리문(catch 블록)
+public static void main(String[] args) {
+    new KeyCharEx();
+    }
 }
-finally {
-    예외 발생 여부와 상관없이 무조건 실행되는 문장(finally 블록)
+~~~
+
+**마우스 리스너 달기와 MouseEvent 객체 활용**  
+* 마우스 리스너 달기
+    * 마우스 리스너는 컴포넌트에 다음과 같이 등록  
+    **component.addMouseListener(myMouseListener);**  
+    * 컴포넌트가 마우스 무브(mouseMoved())나 마우스 드래깅(mouseDraggecd())을 함께 처리하고자 하면, MouseMotion 리스너 따로 등록  
+    **component.addMouseMotionListener(myMouseMotionListener);**  
+* MouseEvent 객체 활용
+    * 마우스 포인터의 위치, 컴포넌트 내 상대 위치
+        * int getX(), int getY()
+    * 마우스 클릭 횟수
+        * int getClickCount()
+
+## 5월 17일
+**중간고사 채점 확인**
+
+**컨테이너와 배치, 배치관리자 개념**  
+* 컨테이너마다 하나의 배치관리자 존재
+* 컨테이너에 부착되는 컴포넌트의 위치와 크기 결정
+* 컨테이너의 크기가 변경되면, 컴포넌트의 위치와 크기 재결정
+
+**배치 관리자 대표 유형 4가지**  
+* FlowLayout 배치관리자
+    * 컴포넌트가 삽입되는 순서대로 왼쪽에서 오른쪽으로 배치  
+    * 배치할 공간이 벗으면 아래로 내려와서 반복한다.
+* BorderLayout 배치 관리자
+    * 컨테이너의 공간을 동(EAST), 서(WEST), 남(SOUTH), 북(NORTH), 중앙(CENTER)의 5개 영역으로 나눔
+* GridLayout 배치 관리자
+    * 컨테이너를 프로그램에서 설정한 동일한 크기의 2차원 격자로 나눔  
+    * 컴포넌트는 삽입 순서대로 좌에서 우로, 다시 위에서 아래로 배치
+* CardLayout 배치관리자  
+    * 컨테이너의 공간에 카드를 쌓아 놓은 듯이 컴포넌트를 포개어 배치  
+* java.awt 패키지에 구현되어 있음  
+
+**컨테이너와 디폴트 배치관리자**  
+* 컨테이너 생성시 자동으로 생성되는 배치관리자  
+
+**컨테이너에 새로운 배치관리자 설정**
+* setLayoutt(LayoutManager lm) 메소드 호출 
+    * lm을 새로운 배치관리자로 설정  
+
+**FlowLayout 배치관리자**  
+* 배치 방법
+    * 컴포넌트를 컨테이너 내에 왼쪽에서 오른쪽으로 배치
+        * 다시 위에서 아래로 순서대로 배치  
+
+**FlowLayout의 생성자**  
+* 생성자
+    * FlowLayout()
+    * FlowLayout(int align, int hGap, int yGap)
+        * align : 컴포넌트를 정렬하는 방법 지정, 왼쪽 정렬(FlowLayoutLEFT), 오른쪽 정렬(FlowLayoutRIGHT), 중앙 정렬(FlowLayoutCENTER(디폴트))
+        * hGap : 좌우 두 컴포넌트 사이의 수평 간격, 픽셀 단위, 디폴트는 5
+        * vGap : 상하 두 컴포넌트 사이의 수직 간격, 픽셀 단위, 디폴트는 5
+
+**FlowLayout 배치관리자 활용**
+~~~java
+import javax.swing.*;
+import java.awt.*;
+    
+    public class FlowLayoutEx extends JFrame {
+        public FlowLayoutEx() {
+            setTitle("FlowLayout 예제");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            Container contentPane = getContentPane();
+        
+        contentPane.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 40));
+        contentPane.add(new JButton("add"));
+        contentPane.add(new JButton("sub"));
+        contentPane.add(new JButton("mul"));
+        contentPane.add(new JButton("div"));
+        contentPane.add(new JButton("Calculate"));
+        
+        setSize(300, 200);
+        setVisible(true);
+    }
+        public static void main(String[] args) {
+        new FlowLayoutEx();
+    }
+}
+~~~
+
+**BorderLayout 배치관리자**  
+* 배치방법
+    * 컨테이너 공간을 5 구역으로 분할, 배치
+        * 동, 서, 남, 북, 중앙
+
+**BorderLayout 생성자와 add()메소드**
+* 생성자
+    * BorderLayout()
+    * BorderLayout(int hGap, int vGap)
+        * hGap : 좌우 두 컴포넌트 사이의 수평 간격, 픽셀 단위(디폴트 : 0)
+        * vGap : 상하 두 컴포넌트 사이의 수직 간격, 픽셀 단위(디폴트 : 0)
+* add() 메소드
+    * void add(Component comp, int index)
+        * comp 컴포넌트를 index 위치에 삽입한다.
+        * index : 컴포넌트의 위치  
+            * 동 : BorderLayout.EAST 
+            * 서 : BorderLayout.WEST 
+            * 남 : BorderLayout.SOUTH 
+            * 북 : BorderLayout.NORTH  
+            * 중앙 : BorderLayout.CENTER
+
+**BorderLayout 배치관리자 활용**
+
+~~~java
+import javax.swing.*;
+import java.awt.*;
+    
+    public class BorderLayoutEx extends JFrame {
+        public BorderLayoutEx() {
+            setTitle("BorderLayout 예제");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            Container contentPane = getContentPane();
+
+        contentPane.setLayout(new BorderLayout(30, 20));
+        contentPane.add(new JButton("Calculate"), BorderLayout.CENTER);
+        contentPane.add(new JButton("add"), BorderLayout.NORTH);
+        contentPane.add(new JButton("sub"), BorderLayout.SOUTH);
+        contentPane.add(new JButton("mul"), BorderLayout.EAST);
+        contentPane.add(new JButton("div"), BorderLayout.WEST);
+        
+        setSize(300, 200); 
+        setVisible(true); 
+    }
+        public static void main(String[] args) {
+        new BorderLayoutEx();
+    }
 }
 
-예외가 발생할 가능성이 있는 실행문들을 try{} 블록으로 묶고, 예외 처리 코드는 catch{} 블록에 작성한다.
-catch() 문의 () 안에는 처리하고자 하는 예외의 타입을 선언한다. catch {} 블록은 예외마다 하나씩 작성되어야 한다.
-finally {}는 선택적 구문으로서 생략해도 상관없으며 실제 많은 경우 생략된다.
-finally 블록이 존재하는 경우, try 블록 실행 후 finally 블록이 순차적으로 실행되며, try 블록이 실행되는 도중 예외가 발생하였다면 catch 블록 실행 후 finally 블록을 실행한다. 그리고 finally 블록 아래의 코드를 계속 실행한다.
+~~~
 
-객체 지향 언어의 목적
-- 소프트웨어의 생산성 향상
-1. 컴퓨터 산업 발전에 따라 소프트웨어의 생명 주기(life cycle) 단축
-2. 객체 지향 언어
+**GrigLayout 배치관리자**
+* 배치방법  
+    * 컨테이너 공간을 동일한 사각형 격자(그리드)로 분할하고 각 셀에 컴포넌트 하나씩 배치
+        * 생성자에 행수와 열수 지정  
+        * 셀에 왼쪽에서 오른쪽으로, 다시 위에서 아래로 순서대로 배치
 
-- 실세계에 대한 쉬운 모델링
-1. 초기 프로그래밍
-2. 현대 프로그래밍
-3. 객체 지향 언어
+**GridLayout 생성자**
+* 생성자
+    * GridLayout(int rows, int cols)
+    * GridLayout(int rows, int cols, int hGap, int vGap)
+        * rows : 격자의 행수 (디폴트 : 1)
+        * cols : 격자의 열수 (디폴트 : 1)
+        * hGap : 좌우 두 컴포넌트 사이의 수평 간격, 픽셀 단위(디폴트 : 0)
+        * vGap : 상하 두 컴포넌트 사이의 수직 간격, 픽셀 단위(디폴트 : 0)
+        * rows x cols 만큼의 셀을 가진 격자로 컨테이너 공간을 분할, 배치
+
+**GridLayout 배치관리자 활용**
+
+~~~ java
+import java.awt.*;
+import javax.swing.*;
+    
+    public class GridLayoutEx extends JFrame {
+        public GridLayoutEx() {
+        super("GridLayout 예제");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Container contentPane = getContentPane();
+
+        contentPane.setLayout(new GridLayout(1, 10));
+            for(int i=0; i<10; i++) {
+                String text = Integer.toString(i);
+                JButton button = new JButton(text);
+                contentPane.add(button);
+            }               
+            setSize(500, 200);
+            setVisible(true);
+        }
+    public static void main(String[] args) {
+        new GridLayoutEx();
+    }
+}
+~~~
+
+**배치관리자 없는 컨테이너**
+* 배치관리자 없는 컨테이너가 필요한 경우
+    * 응용프로그램에서 직접 컴포넌트의 크기와 위치를 결정하고자 하는 경우
+        1. 컴포넌트의 크기나 위치를 개발자 임의로 결정하고자 하는 경우
+        2. 게임 프로그램과 같이 시간이나 마우스/키보드의 입력에 따라 컴포넌트들의 위치와 크기가 수시로 변하는 경우
+        3. 여러 컴포넌트들이 서로 겹쳐 출력하고자 하는 경우
+
+**컴포넌트의 절대 위치와 크기 설정**
+* 배치관리자가 없는 컨테이너에 컴포넌트를 삽입할 때
+    * 프로그램에서 컴포넌트의 절대 크기와 위치 설정
+    * 컴포넌트들이 서로 겹치게 할 수 있음
+
+
+## 5월 10일
+**휴강**
+
+## 5월 3일  
+**컬렉션의 개념**  
+* 컬렉션  
+    * 요소 라고 불리는 가변 개수의 객체들의 저장소  
+    * 고정 크기의 배열을 다루는 어려움 해소  
+    * 다양한 객체들의 삽입, 삭제, 검색 등의 관리 용이  
+
+**컬렉션의 특징**  
+1. 컬렉션은 제네릭(generics)기법으로 구현  
+    * 제네릭  
+        * 특정 타입만 다루지 않고, 여러 종류의 타입으로 변신할 수 있도록 클래스나 메소드를 일반화시키는 기법  
+        * 클래스나 인터페이스 이름에 E, k, v등 타입매개변수 포함  
+    * 제네릭 컬렉션 사례: 벡터 Vector E 
+        * E에서 E에 구체적인 타입을 주어 구체적인 타입만 다루는 벡터로 활용  
+        * 정수만 다루는 컬렉션 벡터 Vector<Integer>  
+        * 문자열만 다루는 컬렉션 벡터 Vector<String>  
+2. 컬렉션의 요소는 객체만 가능  
+    * int,char,double 등의 기본 타입으로 구체화 불가  
+
+**제네릭**  
+* 모든 종류의 데이터 타입을 다룰 수 있도록 일반화된 타입 매개 변수로 클래스(인터페이스)나 메소드를 작성하는 기법
+* C++의 템플릿(template)과 동일  
+
+**Vector E**  
+* 벡터 Vector E의 특성  
+    * E에 사용할 요소의 특정 타입으로 구체화  
+    * 배열을 가변 크기로 다룰 수 있게 하는 컨테이너  
+        * 배열의 길이 제한 극복  
+        * 요소의 개수가 넘치면 자동으로 길이 조절  
+    * 요소 객체들을 삽입, 삭제, 검색하는 컨테이너  
+        * 삽입, 삭제에 따라 자동으로 요소의 위치 조정  
+    * Vector에 삽입 가능한 것  
+        * 객체.null  
+        * 기본 타입의 값은 Wrapper 객체로 만들어 저장  
+    * Vector에 객체 삽입  
+        * 벡터의 맨 뒤, 중간에 객체 삽입 가능  
+    * Vector에서 객체 삭제  
+        * 임의의 위치에 있는 객체 삭제 가능  
+
+**벡터 사용 예시**
+~~~ java
+import java.util.Vector;
+
+public class VectorEx {
+    public static void main(String[] args) {
+        Vector<Integer> v = new Vector<Integer>();
+        v.add(5);
+        v.add(4);
+        v.add(-1);
+
+        v.add(2,100);
+        System.out.println("벡터 내의 요소 객체 수" + v.size());
+        System.out.println("벡터의 현재 용량" + v.capacity());
+
+        for(int i=0; i<v.size(); i++) {
+            int n = v.get(i);
+            System.out.println(n);
+        }
+
+        int sum =  0;
+
+        for(int i=0; i<v.size(); i++) {
+            int n = v.elementAt(i);
+            sum += n;   
+        }
+        System.out.println("벡터에 있는 정수 합" + sum);
+    }
+}
+~~~
+
+**ArrayList[E]**  
+* 가변 크기 배열을 구현한 클래스  
+    * E에 요소로 사용할 특정 타입으로 구체화
+* 벡터와 거의 동일  
+    * 요소 삽입, 삭제, 검색 등 벡터 기능과 거의 동일
+    * 벡터와 달리 스레드 동기화 기능 없음  
+
+**컬렉션의 순차 검색을 위한 Iterator**  
+* Iterator E 인터페이스  
+    * 리스트 구조의 컬렉션에서 요소의 순차 검색을 위한 인터페이스  
+        * Vector E, ArrayList E, LinkedList E가 상속받는 인터페이스  
+
+* Iterator 객체 얻어내기  
+    * 컬렉션의 iterator() 메소드 호출  
+        * 해당 컬렉션을 순차 검색할 수 있는 Iterator 객체 리턴  
+
+**Iterator 사용 예시**
+~~~ java
+import java.util.*;
+public class IteratorEx {
+public static void main(String[] args) {
+
+    Vector<Integer> v = new Vector<Integer>();
    
-## 4월 12일 java2 강의
-static 멤버 
-- 클래스의 멤버들 중 다음과 같이 static 지시어로 선언된 멤버를 
-static 멤버라고 부른다
-- static으로 선언된 멤버는 non-static 멤버와 매우 다른 특성을 가진다
-- static 멤버는 클래스당 하나만 생성되는 멤버로서, 동일한 클래스의 
-모든 객체들이 공유하므로 클래스 멤버라고 부른다
-- non-static 멤버는 객체가 생길때 함께 생성되고 객체가 사라지면 함께 사라진다 그러나 static 멤버는 프로그램을 시작할 때나 클래스 로딩 시에 생성된다
-- 객체를 생성하기 전에도 static 멤버는 사용
--  생성된 객체가 소멸된 후에도 static 멤버는 여전히 살아 공간을 차지하고 있으며 프로그램이 종료할 때 함께 소멸
+    v.add(5); 
+    v.add(4); 
+    v.add(-1); 
+    v.add(2, 100); 
+    
+    Iterator<Integer> it = v.iterator(); 
+    
+    while(it.hasNext()) {
+        int n = it.next();
+        System.out.println(n);
+}
 
-static 멤버 사용
-non-static 멤버가 객체 이름으로만 활용 할 수 있는 것과는 달리
-static멤버는 객체 이름이나 클래스 이름으로 모두 활용 가능하다.
-   staticsample.m =3; // 클래스 이름으로 static필드 접근
-   staticsample.f(); // 클래스 이름으로 static 메소드 호출
+    int sum = 0;
+    it = v.iterator(); 
+       
+    while(it.hasNext()) {
+        int n = it.next();
+        sum += n;
+        }
+        System.out.println("벡터에 있는 정수 합 : " + sum);
+    }
+}
+~~~
 
-static 메소드의 제약 조건
-static 메소드는 두 개의 제약 사항을 가진다
+**HashMap<K,V>**  
+* 키(key)와 값(value)의 쌍으로 구성되는 요소를 다루는 컬렉션  
+    * K : 키로 사용할 요소의 타입  
+    * V : 값으로 사용할 요소의 타입  
+    * 키와 값이 한 쌍으로 삽입  
+    * '값'을 검색하기 위해서는 반드시 '키' 이용  
+* 삽입 및 검색이 빠른 특징  
+    * 요소 삽입 : put() 메소드  
+    * 요소 검색 : get() 메소드  
 
-- static 메소드는 오직 static 멤버만 접근 할 수 있다.
-static 메소드는 객체가 생성디지 않은 상황에서도 사용이 가능하므로
-객체에 속한 인스턴스 메소드, 인스턴스 변수 등을 사용할 수 없고
-static 멤버들만 사용 가능하다.
-인스턴스 메소드는 static멤버들을 사용할 수 있다.
+**HashMap 사용 예시**
 
-- static 메소드에서는 this를 사용할 수없다
-static메소드는 객체 없이도 존재하기 때문에, static 메소드에서 
-this를 사용할 수 없다.
+~~~java
+import java.util.*;
+public class HashMapDicEx {
 
-final 클래스
-final 클래스 이름 앞에  사용되면 클래스를 상속받을 수 없음을 지정한다.
+    public static void main(String[] args) {
 
-final 메소드
-메소드 앞에 final이 붙으면 이 메소드는 더 이상 오버라이딩 할 수 없음을 지저한다
-자식 클래스가 부모 클래스의 특정 메소드를 오버라이딩 하지 못하게 하고 
-무조건 상속받아 사용하도록 하고자 한다면 final로 지정하면 된다.
+    HashMap<String, String> dic = new HashMap<String, String>();
 
-final 필드 
-자바에서 final로 필드를 선언하면 필드는 상수가 된다.
-상수 필드는 한번 초기화 되면 값을 변경할수없다.
-final 키워드를 public static와 함께 선언하면 프로그램 전체에서 공유할 수 있는
-상수가된다
+    dic.put("baby", "아기"); 
+    dic.put("love", "사랑");
+    dic.put("apple", "사과");
 
-자바 상속의 특징
-- 클래스 다중 상속(multiple ingeritance) 불허
-C++는 다중 상속 가능(C++는 다중 상속으로 멤버가 중복 생성되는 문제 있음)
-자바는 인터페이스(interface)의 다중 상속 허용
-- 모든 자바 클래스는 묵시적으로 Object클래스 상속 받음
-java.iang.Object는 클래스는 모든 클래스의 슈퍼 클래스
+    Set<String> keys = dic.keySet(); 
+    Iterator<String> it = keys.iterator();
+        
+        while(it.hasNext()) {
+            String key = it.next();
+            String value = dic.get(key);
+            System.out.print("(" + key + "," + value + ")");
+    }
+        System.out.println();
 
-슈퍼 클래스의 멤버에 대한 서브 클래스의 접근
-- 슈퍼 클래스의 private 멤버
-서브 클래스에서 접근할 수 없음
--슈퍼 클래스의 디폴트 멤버
-서브 클래스가 동일한 패키지에 있을 때, 접근 가능
-- 서브 클래스의 public 멤버
-서브 클래스는 항상 접근 가능
-- 서브 클래스의  protected 멤버
-같은 패키지 내의 모든 클래스 접근 허용
-패키지 여부와 상관없이 서브 클래스는 접근 가능
+        Scanner scanner = new Scanner(System.in);
+            for(int i=0; i<3; i++) {
+                System.out.print("찾고 싶은 단어는?");
+        String eng = scanner.next();
+        String kor = dic.get(eng);
+            if(kor == null)
+                System.out.println(eng + "는 없는 단어 입니다.");
+            else
+            System.out.println(kor);
+        }
+    }
+}
+~~~
+**자바의 GUI(Graphical User Interface)**  
+* GUI 응용프로그램  
+    * GUI  
+        * 사용자가 편리하게 입출력 할 수 있도록 그래픽으로 화면을 구성하고, 마우스나 키보드로 입력받을 수 있도록 지원하는 사용자 인터페이스
+* 자바 언어에서 GUI 응용프로그램 작성
+    * AWT와 Swing 패키지에 강력한 GUI 컴포넌트 제공
+        * 쉬운 GUI 프로그래밍  
+* AWT와 Swing 패키지  
+    * AWT(Abstract Windowing Toolkit) 패키지
+        * 자바가 처음 나았을 때부터 배포된 GUI 패키지, 최근에는 거의 사용하지 않음
+        * AWT 컴포넌트는 중량 컴포넌트(heavy weight component)
+* Swing 패키지
+    * AWT 기술을 기반으로 작성된 자바 라이브러리
+    * 모든 AWT 기능 + 추가된 풍부하고 화려한 고급 컴포넌트
+    * AWT 컴포넌트를 모두 스윙으로 재작성. AWT 컴포넌트 이름 앞에 J자를 덧붙임
+    * 순수 자바 언어로 구현
+    * 스윙 컴포넌트는 경량 컴포넌트(light weight component)
+    * 현재 자바의 GUI로 사용됨  
 
-protected 멤버
-- proctected 멤버에 대한 접근
-같은 패키지의 모든 클래스에게 허용
-상속되는 서브 클래스(같은 패키지든 다른 패키지든 상관 없음)에게 허용
+**컨테이너와 컴포넌트**  
+* 컨테이너
+    * 다른 컴포넌트를 포함할 수 있는 GUI 컴포넌트
+        * java.awt.Container를 상속받음
+    * 다른 컨테이너에 포함될 수 있음
+        * AWT 컨테이너 : Panel, Frame, Applet, Dialog, Window
+        * Swing 컨테이너 : JPanel JFrame, JApplet, JDialog, JWindow
+* 컴포넌트
+    * 컨테이너에 포함되어야 화면에 출력될 수 있는 GUI 객체
+    * 다른 컴포넌트를 포함할 수 없는 순수 컴포넌트
+    * 모든 GUI 컴포넌트가 상속받는 클래스 : java.awt.Component
+    * 스윙 컴포넌트가 상속받는 클래스 : javax.swing.JComponent
+* 최상위 컨테이너
+    * 다른 컨테이너에 포함되지 않고도 화면에 출력되며 독립적으로 존재 가능한 컨테이너
+        * 스스로 화면에 자신을 출력하는 컨테이너 : JFrame, JDialog, JApplet
 
-서브 클래스/슈퍼 클래스의 생성사 호줄과 실행
-- 서브 클래스의 객체가 생성될 때
-슈퍼 클래스 생성자와 서브 클래스 생성자 모두 실행
-호출 순서
-- 서브 클래스의 생성자 먼저 호출
--서브 클래스의 생성자는 실행 전 슈퍼 클래스 생성자 호출
-실행 순서
-- 슈퍼 클래스의 생성자가 먼저 실행된 후 서브 클래스의 생성자 실행
-
-서브 클래스와 슈퍼 클래스의 생성자 선택
-- 슈퍼 클래스와 서브 클래스
-각각 여러 개의 생성자 작성 가능
-- 서브 클래스의 객체가 생성될 때
-슈퍼 클래스 생성자 1개와 서브 클래스 생성자 1개가 실행
-- 서브 클래스의 생성자와 슈퍼 클래스의 생성자가 결정되는 방식
-1. 개발자의 명시적 선택
- - 서브 클래스 개발자가 슈퍼 클래스의 생성자 명시적 선택
- - super() 키워드를 이용하여 선택
-2. 컴파일러가 기본생성자 선택
- - 서브 클래스 개발자가 슈퍼 클래스의 생성자를 선택하지 않는 경우
- - 컴파일러가 자동으로 슈퍼 클래스의 기본 생성자 선택
-
- 상속의 장점
- - 클래스 사이의 멤버 중복 선언 불필요 - 클래스의 간결화
- - 클래스들의 계층적 분류로 클래스 관리 용어
- - 클래스 재사용과 확장을 통한 소프트웨어의 생산성 향상
-
- 클래스 상속과 객체
- - 상속 선언
- extends 키워드로 선언 (부모 클래스를 물려받아 확장한다는 의미)
- 부모 클래스 -> 슈퍼 클래스(super class)
- 자식 클래스 -> 서브 클래스(sub class)
-
- 서브 클래스 객체의 모양
- - 슈퍼 클래스 객체와 서브 클래스의 객체는 별개
- - 서브 클래스 개게는 슈퍼 클래스 멤버 포함
-
- 서브 클래스 객체 생성
- Point 클래스의 객체 p와 Colorpoint 클래스의 객체 cp는 다음가 같이 생성한다
-    Point p = new Point();
-    ColorPoint cp = new ColorPoint(); // 서브 클래스 객체 생성
-자바 상속의 특징
-- 클래스 다중 상속(multiple ingeritance) 불허
-C++는 다중 상속 가능(C++는 다중 상속으로 멤버가 중복 생성되는 문제 있음)
-자바는 인터페이스(interface)의 다중 상속 허용
-- 모든 자바 클래스는 묵시적으로 Object클래스 상속 받음
-java.iang.Object는 클래스는 모든 클래스의 슈퍼 클래스
-
-슈퍼 클래스의 멤버에 대한 서브 클래스의 접근
-- 슈퍼 클래스의 private 멤버
-서브 클래스에서 접근할 수 없음
--슈퍼 클래스의 디폴트 멤버
-서브 클래스가 동일한 패키지에 있을 때, 접근 가능
-- 서브 클래스의 public 멤버
-서브 클래스는 항상 접근 가능
-- 서브 클래스의  protected 멤버
-같은 패키지 내의 모든 클래스 접근 허용
-패키지 여부와 상관없이 서브 클래스는 접근 가능
-
-protected 멤버
-- proctected 멤버에 대한 접근
-같은 패키지의 모든 클래스에게 허용
-상속되는 서브 클래스(같은 패키지든 다른 패키지든 상관 없음)에게 허용
-
-서브 클래스/슈퍼 클래스의 생성사 호줄과 실행
-- 서브 클래스의 객체가 생성될 때
-슈퍼 클래스 생성자와 서브 클래스 생성자 모두 실행
-호출 순서
-- 서브 클래스의 생성자 먼저 호출
--서브 클래스의 생성자는 실행 전 슈퍼 클래스 생성자 호출
-실행 순서
-- 슈퍼 클래스의 생성자가 먼저 실행된 후 서브 클래스의 생성자 실행
-
-서브 클래스와 슈퍼 클래스의 생성자 선택
-- 슈퍼 클래스와 서브 클래스
-각각 여러 개의 생성자 작성 가능
-- 서브 클래스의 객체가 생성될 때
-슈퍼 클래스 생성자 1개와 서브 클래스 생성자 1개가 실행
-- 서브 클래스의 생성자와 슈퍼 클래스의 생성자가 결정되는 방식
-1. 개발자의 명시적 선택
- - 서브 클래스 개발자가 슈퍼 클래스의 생성자 명시적 선택
- - super() 키워드를 이용하여 선택
-2. 컴파일러가 기본생성자 선택
- - 서브 클래스 개발자가 슈퍼 클래스의 생성자를 선택하지 않는 경우
- - 컴파일러가 자동으로 슈퍼 클래스의 기본 생성자 선택
-
- 상속의 장점
- - 클래스 사이의 멤버 중복 선언 불필요 - 클래스의 간결화
- - 클래스들의 계층적 분류로 클래스 관리 용어
- - 클래스 재사용과 확장을 통한 소프트웨어의 생산성 향상
-
- 클래스 상속과 객체
- - 상속 선언
- extends 키워드로 선언 (부모 클래스를 물려받아 확장한다는 의미)
- 부모 클래스 -> 슈퍼 클래스(super class)
- 자식 클래스 -> 서브 클래스(sub class)
-
- 서브 클래스 객체의 모양
- - 슈퍼 클래스 객체와 서브 클래스의 객체는 별개
- - 서브 클래스 개게는 슈퍼 클래스 멤버 포함
-
- 서브 클래스 객체 생성
- Point 클래스의 객체 p와 Colorpoint 클래스의 객체 cp는 다음가 같이 생성한다
-    Point p = new Point();
-
-## 5월 3일 java2 강의
-컬렉션
-- 요소 라고 불리는 가변 개수의 객체들의 저장소
-- 고정 크기의 배열을 다루는 어려움 해소
-
-## 컬렉션의 특징
-1. 컬렉션은 제네릭(generics)기법으로 구현
-- 컬렉션 클래스나 인터페이스의 이름에는 <E>,<K>,<V> 등이 항상 포함된다. 이들은 "타입 매개 변수" 라고 하며, 컬렉션 요소<element>를 '일반화'시킨 타입이다. 
-그러므로 Vector<E>에서 E 대신 Integer나 String으로 구체적인 타입을 지정하여 사용한다
-2. 컬렉션의 요소는 객체들만 가능하다.
-- int,char,double 등의 기본 타입의 데이터는 기본적으로 컬렉션의 요소로 불가능하다.
-
-## 제네릭의 기본 개념
-- 제네릭은 메소드나 클래스 코드를 찍어내듯이 생산할 수 있도록 일반화(generic)시키는 도구이다.
-
-## 제네릭 타입 매개 변수
-- E : Element 를 의미하며 컬렉션에서 요소를 표시할 때 사용
-- T : Type을 의미
-- V : Value를 의미
-- K : key를 의미
-
-## 벡터 Vector<E>의 특징
-- <E>에 사용할 요소의 특정 타입으로 구체화
-- 배열을 가변 크기로 다룰 수 있게 하는 컨테이너
-1. 배열의 길이 제한 극복
-2. 요소의 개수가 넘치면 자동으로 길이 조절
-- 요소 객체들을 삽입,삭제,검색하는 컨테이너
-1. 삽입,삭제에 따라 자동으로 요소의 위치 조정
-- Vector에 삽입 가능한 것
-1. 객체,null
-2. 기본 타입의 값은 Wrapper객체로 만들어 저장
-- Vector에 객체 삽입
-1. 벡터의 맨 뒤, 중간에 객체 삽입 가능
-- Vector에서 객체 삭제
-1. 임의의 위치에 있는 객체 삭제 가능
-
-## ArrayList<E>
-- 가변 크기 배열을 구현한 클래스
-1. <E>에 요소로 사용할 특정 타입으로 구체화
-- 벡터와 거의 동일
-1. 요소 삽입, 삭제, 검색 등 벡터 기능과 거의 동일
-2. 벡터와 달리 스레드 동기화 기능 없음
-
-## 컬렉션의 순차 검색을 위한 Iterator
-- Iterator<E> 인터페이스
-    - 리스트 구조의 컬렉션에서 요소의 순차 검색을 위한 인터페이스
-    - Vector<E>, ArrayList<E>, LinkedList<E>가 상속받는 인터페이스
-- Iterator 객체 얻어내기
-    - 컬렉션의 iterator() 메소드 호출
-    - 해당 컬렉션을 순차 검색할 수 있는 Iterator 객체 리턴
-
-## HashMap<K,V>
-- 키(Key)와 값(Value)의 쌍으로 구성되는 요소를 다루는 컬렉션
-    - K : 키로 사용할 요소의 타입
-    - V : 값으로 사용할 요소의 타입
-    - 키와 값이 한쌍으로 삽입
-    - '값'을 검색하기 위해서는 반드시 '키' 이용    
-- 삽입 및 검색이 빠른 특징
-    - 요소 삽입 : put()메소드
-    - 요소 검색 : get()메소드
-
- ## 자바의 GUI(Graphical User Interface) 
-GUI 응용 프로그램
-- GUI
-    - 사용자가 편리하게 입출력 할 수 있도록 그래픽으로 화면을 구성하고, 마우스나 키보드로 입력 받을 수 있도록 지원하는 사용자 인터페이스
-- 자바 언어에서 GUI 응용프로그램 작성
-    - AWT와 Swing 패키지에 강력한 GUI 컴포넌트 제공
-    - 쉬운 GUI 프로그래밍
-
-AWT와 Swing 패키지
-- AWT(Abstract Windowing Toolkit) 패키지
-    - 자바가 처음 나왔을 때부터 배포된 GUI패키지, 최근에는 거의 사용하지 않음
-    - AWT 컴포넌트는 중량 컴포넌트(heavy weight component)
-- Swing 패키지
-    - AWT 기술을 기반으로 작성된 자바 라이브러리
-    - 모든 AWT 기능 + 추가된 풍부하고 화려한 고급 컴포넌트
-    - AWT 컴포넌트를 모두 스윙으로 재작성. AWT 컴포넌트 이름 앞에 J를 덧붙임
-    - 순수 자바 언어로 구현
-    - 스윙 컴포넌트는 경량 컴포넌트(light weight component)
-    - 현재 자바의 GUI로 사용됨 
-
-## 컨테이너와 컴포넌트
-컨테이너
-- 다른 컴포넌트를 포함할 수 있는 GUI 컴포넌트
-    - java.awt.Container를 상속받음
-- 다른 컨테이너에 포함될 수 있음
-    - AWT 컨테이너 : Panel,Frame,Applet,Dialog,Window
-    - Swing 컨테이너 : JPanel,JFrame,JApplet,Jdialog,JWindow
-
-컴포넌트
-- 컨테이너에 포함되어야 화면에 출력될 수 있는 GUI 객체
-- 다른 컴포넌트를 포함할 수 없는 순수 컴포넌트
-- 모든 GUI 컴포넌트가 상속받는 클래스 : java.awt.Component
-- 스윙 컴포넌트가 상속받는 클래스 : javax.swing.JComponent
-
-최상위 컨테이너
-- 다른 컨테이너에 포함되지 않고도 화면에 출력되며 독립적으로 존재 가능한 컨테이너
-    - 스스로 화면에 자신을 출력하는 컨테이너 : JFrame,JDialog,JApplet
-
-## 스윙 GUI 프로그램 만들기
-- 스윙 GUI 프로그램을 만드는 과정
+**스윙 GUI 프로그램 만들기**  
+* 스윙 GUI 프로그램을 만드는 과정
 1. 스윙 프레임 만들기
 2. main() 메소드 작성
 3. 스윙 프레임에 스윙 컴포넌트 붙이기
 
-- 스윙 프로그램 작성에 필요한 import문
-    - import java.awt.*; //그래픽 처리를 위한 클래스들의 경로명
-    - import java.awt.event.*; // AWT 이벤트 사용을 위한 경로명
-    - import javax.swing.*; // 스윙 컴포넌트 클래스들의 경로명
-    - import.javax.swing.event.*; // 스윙 이벤트를 위한 경로명
+* 스윙 프로그램 작성에 필요한 import문
+    * import java.awt.*; // 그래픽 처리를 위한 클래스들의 경로명
+    * import java.awt.event.*; // AWT 이벤트 사용을 위한 경로명
+    * import javax.swing.*; // 스윙 컴포넌트 클래스들의 경로명
+    * import javax.swing.event.*; // 스윙 이벤트를 위한 경로명
 
-## 스윙 프레임
-- 스윙 프레임 : 모든 스윙 컴포넌트를 담는 최상위 컨테이너
-    - JFrame을 상속받아 구현
-    - 컴포넌트들은 화면에 보이려면 스윙 프레임에 부착되어야함
-- 스윙 프레임(JFrame) 기본 구성
-    - 프레임 - 스윙 프로그램의 기본 틀
-    - 메뉴바 - 메뉴들이 부착되는 공간
-    - 컨텐트팬 - GUI 컴포넌트들이 부착되는 공간
+**스윙 프레임**  
+* 스윙 프레임 : 모든 스윙 컴포넌트를 담는 최상위 컨테이너
+    * JFrame을 상속받아 구현
+    * 컴포넌트들은 화면에 보이려면 스윙 프레임에 부착되어야 함
+        * 프레임을 닫으면 프레임에 부착된 모든 컴포넌트가 보이지 않게 됨
+* 스윙 프레임(JFrame) 기본 구성
+    * 프레임 – 스윙 프로그램의 기본 틀
+    * 메뉴바 – 메뉴들이 부착되는 공간
+    * 컨텐트팬 – GUI 컴포넌트들이 부착되는 공간  
 
-## 프레임 만들기 ,JFrame 클래스 상속
-- 스윙 프레임
-    - JFrame 클래스를 상속받은 클래스 작성
-    - 프레임의 크기 반드시 지정 : setSize() 호출
-    - 프레임을 화면에 출력하는 코드 반드시 필요 : setVisible(true) 호출
+**프레임 만들기, JFrame 클래스 상속**  
+* 스윙 프레임
+    * JFrame 클래스를 상속받은 클래스 작성
+    * 프레임의 크기 반드시 지정 : setSize() 호출
+    * 프레임을 화면에 출력하는 코드 반드시 필요 : setVisible(true) 호출 
 
-## 스윙 응용프로그램에서 main()의 기능과 위치
-- 스윙 응용프로그램에서 main()의 기능 최소화 바람자기
-    - 스윙 응용프로그램이 실행되는 시작점으로서의 기능만
-    - 스윙 프레임을 생성하는 정도의 코드로 최소화
-public static void main(String [] args) {
-    MyFrame frame = new MyFrame(); // 스윙 프레임 생성
+**300x300 프레임 만들기**  
+
+~~~java
+import javax.swing.*;
+
+public class MyFrame extends JFrame{
+    public MyFrame() {
+        setTitle("300x300 Frame");
+        setSize(300,300);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        MyFrame frame = new MyFrame();
+    }
 }
 
-## 프레임에 컴포넌트 붙이기
-- 타이틀 달기
-    - super() 나 setTitle() 이용
-- 컨텐트팬에 컴포넌트 달기
-- 컨텐트팬이란?
-    - 스윙 컴포넌트들이 부착되는 공간
-- 컨텐트팬 알아내기
-    - 스윙 프레임에 붙은 디폴트 컨텐트팬 알아내기
-- 컨텐트팬에 컴포넌트 붙이기
-- 컨텐트팬 변경
+~~~
 
-- ## 이벤트 기반 프로그래밍
-- 이벤트의 발생에 의해 프로그램 흐름이 결정되는 방식
-    - 이벤트가 발생하면 이벤트를 처리하는 루틴(이벤트 리스너) 실행
-    - 실행될 코드는 이벤트의 발생에 의해 전적으로 결정
-- 반대되는 개념 : 배치 실행
-    - 프로그램의 개발자가 프로그램의 흐름을 결정하는 방식
-- 이벤트 종류
-    - 사용자의 입력 : 마우스 드래그, 클릭, 키보드 누름 등
-    - 센서로부터의 입력, 네트워크로부터의 송수신
-    - 다른 응용프로그램이나 다른 스레드로부터의 메시지
-- 이벤트 기반 응용 프로그램의 구조
-    - 각 이벤트마다 처리하는 리스너 코드 보유
-- GUI 응용프로그램은 이벤트 기반 프로그래밍으로 작성됨
-    - GUI 라이브러리 종류
-        - C++의 MFC, C# GUI, Visual Basic, X Window, Android 등
-        - 자바의 AWT와 Swing
-## 자바 스윙 프로그램에서 이벤트 처리 과정
- 이벤트가 처리되는 과정
-- 이벤트 발생
-    - 예 : 마우스의 움직임 혹은 키보드 입력
-- 이벤트 객체 생성
-    - 현재 발생한 이벤트에 대한 정보를 가진 객체
-- 응용프로그램에 작성된 이벤트 리스너 찾기
-- 이벤트 리스너 실행
-    - 리스너에 이벤트 객체 전달
-    - 리스너 코드 실행
-## 이벤트 객체
-- 발생한 이벤트에 관한 정보를 가진 객체
-- 이벤트 리스너에 전달됨
-    - 이벤트 리스너 코드가 발생한 이벤트에 대한 상황을 파악할 수 있게 함
-## 이벤트 객체가 포함하는 정보
-- 이벤트 종류와 이벤트 소스
-- 이벤트가 발생한 화면 좌표 및 컴포넌트 내 좌표
-- 이벤트가 발생한 버튼이나 메뉴 아이템의 문자열
-- 클릭된 마우스 버튼 번호 및 마우스의 클릭 횟수
-- 키의 코드 값과 문자 값
-- 체크박스, 라디오버튼 등과 같은 컴포넌트에 이벤트가 발생하였다면 체크 상태
-## 이벤트 소스를 알아 내는 메소드
-- Object getSource()
-    - 발생한 이벤트의 소스 컴포넌트 리턴
-    - Object 타입으로 리턴하므로 캐스팅하여 사용
-    - 모든 이벤트 객체에 대해 적용
-## 리스너 인터페이스
-- 이벤트 리스너
-    - 이벤트를 처리하는 자바 프로그램 코드, 클래스로 작성
-- 자바는 다양한 리스너 인터페이스 제공
-- 사용자의 이벤트 리스너 작성
-    - 자바의 리스너 인터페이스를 상속받아 구현
-    - 리스너 인터페이스의 모든 추상 메소드 구현
-## 이벤트 리스너 작성 방법
-- 3가지 방법
-    - 독립 클래스로 작성
-        - 이벤트 리스너를 완전한 클래스로 작성
-        - 이벤트 리스너를 여러 곳에서 사용할 때 적합함.
-    - 내부 클래스(inner class)로 작성
-        - 클래스 안에 멤버처럼 클래스 작성
-        - 이벤트 리스너를 특정 클래스에서만 사용할 때 적합
-    - 익명 클래스(anonymous class)로 작성
-        - 클래스의 이름 없이 간단히 리스너 작성
-        - 클래스 조차 만들 필요 없이 리스너 코드가 간단한 경우에 적합
-## 자바의 GUI 프로그래밍 방법
-- GUI 프로그래밍 방법 2종류
-    - 컴포넌트 기반 GUI 프로그래밍
-    - 그래픽 기반 GUI 프로그래밍
+**프레임에 컴포넌트 붙이기**  
+* 타이틀 달기  
+    * super()나 setTitle()이용  
+* 컨텐트팬에 컴포넌트 달기  
+    * 컨텐트팬이란?  
+        * 스윙 컴포넌트들이 부착되는 공간  
 
-## JComponent
-- 스윙 컴포넌트는 모두 상속받는 슈퍼 클래스, 추상 클래스
-- 스윙 컴포넌트들이 상속받는 공통 메소드와 상수 구현
 
-## JLabel로 문자열과 이미지 출력
-- JLabel의 용도
-    - 문자열이나 이미지를 화면에 출력하기 위한 목적
-- 문자열 레이블 생성
-    - JLabel textLabel = new JLabel("사랑합니다");
-- 이미지 레이블 생성
-    - 이미지 파일로부터 이미지를 읽기 위해 imagelcon 클래스 사용
-    - 다룰 수 있는 이미지 : png,gif,jpg
-- 수평 정렬 값을 가진 레이블 컴포넌트 생성
-    - lmagelcon image = new lmagelcon("images/sunset.jpg");
-    - JLabel label = new JLabel("사랑합니다", image, SwingConstants.CENTER);
+**컨텐트팬 예시**  
+~~~java
+import javax.swing.*;
+import java.awt.*;
 
-## JButton의 용도
-- 버튼 모양의 컴포넌트. 사용자로부터 명령을 입력받기 위한 목적
-- 버튼은 클릭될 때 Action 이벤트 발생
-
-## 이미지 버튼 만들기
-- 하나의 버튼에 3개의 이미지 등록
-    - 마우스 조작에 따라 3개의 이미지 중 적절한 이미지 자동 출력
-- 3개의 버튼 이미지
-    - noremallcon
-        - 버튼의 보통 상태(디폴트) 때 출력되는 이미지
-        - 생성자에 이미지 아이콘 전달 혹은 JButton의 setIcon(normallcon);
-    - rolloverlcon
-        - 버튼에 마우스가 올라갈 때 출력되는 이미지
-        - 이미지 설정 메소드:JButton의 setRolloverIcon(rolloverIcon);
-    - pressedlcon
-        - 버튼을 누른 상태 때 출력되는 이미지
-        - 이미지 설정 메소드:JButton의 setPressedIcon(pressedIcon)
-
-## 체크박스에 item 이벤트 처리
-- item 이벤트
-    - 체크 박스의 선택 상태에 변화가 생길 때 발생하는 이벤트
-        - 사용자가 마우스나 키보드로 체크박스를 선택/해제할 때
-        - 프로그램에서 체크박스를 선택/해제하여 체크 상태에 변화가 생길 때
-    - 이벤트가 발생하면 itemEvent 객체 생성
-    - itemListener 리스너를 이용하여 이벤트 처리
-
-## 스윙 컴포넌트 그리기, paintComponent()
-- 스윙의 페인팅 기본
-    - 모든 컴포넌트는 자신의 모양을 스스로 그린다.
-    - 컨테이너는 자신을 그린 후 그 위에 자식 컴포넌트들에게 그리기 지시
-    - 모든 스윙 컴포넌트는 자신의 모양을 그리는 paintComponent() 메소드 보유
-- public void paintComponent(Graphics g)
-    - 스윙 컴포넌트가 자신의 모양을 그리는 메소드
-    - JComponent의 메소드 : 모든 스윙 컴포넌트가 이 메소드를 오버라이딩함
-    - 언제 호출되는가?
-        - 컴포넌트가 그려져야 하는 시점마다 호출
-        - 크기가 변경되거나, 위치가 변경되거나, 컴포넌트가 가려졌던 것이 사라지는 등
-- 매개변수인 Graphics 객체
-    - 그래픽 컨텍스트 : 컴포넌트 그리기에 필요한 도구를 제공하는 객체
-    - 자바 플랫폼에 의해 공급
-    - 색 지정, 도형 그리기, 클리핑, 이미지 그리기 등의 메소드 제공
-
-## JPanel
-- 비어 있는 컨테이너
-- 개발자가 다양한 GUI를 창출할 수 있는 캔버스로 적합
-- JPanel을 상속받아 개발자 임의의 모양을 가지는 패널로 많이 사용
-
-## 그래픽 기반 GUI 프로그래밍
-- 스윙 컴포넌트에 의존하지 않고 선, 원 이미지 등을 이용하여 직접 화면을 구성하는 방법
-- 그래픽 기반 GUI 프로그래밍의 학습이 필요한 이유
-    - 컴포넌트의 한계를 극복하고 차트, 게임 등 자유로운 콘텐츠 표현
-    - 그래픽은 컴포넌트에 비해 화면 출력 속도가 빠름
-    - 스윙 컴포넌트들로 모두 그래픽으로 작성되어 있어, 그래픽에 대한 학습은 자바 GUI의 바탕 기술을 이해하는데 도움
-    - 그래픽을 이용하여 개발자 자신만의 컴포넌트 개발
-
-## Graphics와 문자열 출력
-- 기능
-    - 색상 선택하기
-    - 문자열 그리기
-    - 도형 그리기
-    - 도형 칠하기
-    - 이미지 그리기
-    - 클리핑
-
-## 스윙에서 이미지를 그리는 2가지 방법
-1. JLabel을 이용한 이미지 그리기
-- 장점 : 이미지 그리기 간편 용이
-- 단점 : 이미지의 원본 크기대로 그리므로 이미지 크기 조절 불가
-2. Graphics의 drawimage()로 이미지 출력
-- 장점 : 이미지 일부분 등 이미지의 원본 크기와 다르게 그리기 가능
-- 단점 : 컴포넌트로 관리할 수 없음, 이미지의 위치나 크기 등을 적절히 조절하는 코딩 필요
-
-## repaint()
-- 모든 컴포넌트가 가지고 있는 메소드
-- 자바 플랫폼에게 컴포넌트 그리기를 강제 지시하는 메소드
-- repaint()를 호출하면, 자바 플랫폼이 컴포넌트의 paintComponent() 호출
-
-- repaint()의 호출이 필요한 경우
-    - 개발자가 컴포넌트를 다시 그리고자 하는 경우
-- 부모 컴포넌트부터 다시 그리는것이 좋음
-    - 컴포넌트 repaint()가 불려지면
-        - 이 컴포넌트는 새로운 위치에 다시 그려지지만 이전의 위치에 있던 자신의 모양이 남아 이음
-    - 부모 컴포넌트 repaint()를 호출하면
-        - 부모 컨테이너의 모든 내용을 지우고 자식을 다시 그리기 때문에 컴포넌트의 이전 모양이 지워지고 새로 변경된 크기나 위치에 그려짐
-
-## 멀티태스킹
-- 여러 개의 작업(태스크)이 동시에 처리되는 것
-
-## 스레드와 운영체제
-- 스레드(thread)
-    - 운영체제에 의해 관리되는 하나의 작업 혹은 태스크
-    - 스레드와 태스크(혹은 작업)은 바꾸어 사용해도 무관
-- 멀티스레딩(multi-threading)
-    - 여러 스레드를 실행시키는 응용프로그램을 작성하는 기법
-- 스레드 구성
-    - 작업을 실행하기 위해 작성한 프로그램 코드
-    - 개발자가 작성
-- 스레드 정보
-    - 스레드 명, 스레드 ID, 스레드의 실행 요소 시간, 스레드의 우선 순위 등
-    - 운영체제가 스레드에 대해 관리하는 정보
-
-## 멀티태스킹과 멀티스레딩
-- 멀티프로세싱(multi-processing)
-    - 하나의 응용프로그램이 여러 개의 프로세스를 생성하고, 각 프로세스가 하나의 작업을 처리하는 기법
-    - 각 프로세스 독립된 메모리 영역을 보유하고 실행
-    - 프로세스 사이의 문맥 교환에 따른 과도한 오버헤드와 시간 소모의 문제점
-- 멀티스레딩(multi-threading)
-    - 하나의 응용프로그램이 여러 개의 스레드를 생성하고, 각 스레드가 하나의 작업을 처리하는 기법
-    - 하나의 응용프로그램에 속한 스레드는 변수 메모리, 파일 오픈 테이블 등 자원으로 공유하므로, 문맥 교환에 따른 오버헤드가 매우 작음
-    - 현재 대부분의 운영체제가 멀티스레딩을 기본으로 하고 있음
-
-## 자바 스레드와 JVM
-- 자바 스레드
-    - 자바 가상 기계(JVM)에 의해 스케쥴되는 실행 단위의 코드 블럭
-    - 스레드의 생명 주기는 JVM에 의해 관리됨 : JVM은 스레드 단위로 스케쥴링
-- JVM과 자바의 멀티스레딩
-    - 하나의 JVM은 하나의 자바 응용프로그램만 실행
-        - 자바 응용프로그램이 시작될 때 JVM이 함께 실행됨
-        - 자바 응용프로그램이 종료하면 JVM도 함께 종료함
-    - 응용프로그램은 하나 이상의 스레드로 구성 가능
-- 스레드 만드는 2가지 방법
-    1. java.lang.Thread 클래스를 상속받아 스레드 작성
-    2. java.lang.Runnable 인터페이스를 구현하여 스레드 작성
-
-## main 스레드
-- JVM이 응용프로그램을 실행할 때 디폴트로 생성되는 스레드
-    - main() 메소드 실행 시작
-    - main() 메소드가 종료하면 main 스레드 종료
-
-## 스레드 동기화(Thread Synchronization)
-- 멀티스레드 프로그램 작성시 주의점
-    - 다수의 스레드가 공유 데이터에 동시에 접근하는 경우
-        - 공유 데이터의 값에 예상치 못한 결과 발생 가능
-- 스레드 동기화
-    - 동기화란?
-        - 스레드 사이의 실행순서 제어, 공유데이터에 대한 접근을 원활하게 하는 기법
-    - 멀티스레드의 공유 데이터의 동시 접근 문제 해결
-        - 방법 1) 공유 데이터를 접근하는 모든 스레드의 한 줄 세우기
-        - 방법 2) 한 스레드가 공유 데이터에 대한 작업을 끝낼 때 까지 다른 스레드가 대기 하도록 함
-- 자바의 스레드 동기화 방법 2가지
-    - synchronized 키워드로 동기화 블록 지정
-    - wait()-notify() 메소드로 스레드의 실행 순서 제어
-
-## synchronized 블록 지정
-- synchronized 키워드
-    - 스레드가 독점적으로 실행해야 하는 부분(동기화 코드)을 표시하는 키워드
-        - 임계 영역(criitical section) 표기 키워드
-    - synchronized 블록 지정 방법
-        - 메소드 전체 혹은 코드 블록
-- synchronized 블록이 실행 될 때,
-    - 먼저 실행한 스레드가 모니터 소유
-        - 모니터란 해당 객체를 독점적으로 사용할 수 있는 권한
-    - 모니터를 소유한 스레드가 모니터를 내놓을 때까지 다른 스레드 대기
-
-## wait()-notify()를 이용한 스레드 동기화
-- wait()-notify()가 필요한 경우
-    - 공유 데이터로 두 개 이상의 스레드가 데이터를 주고 받을 때
-        - producer-consumer문제
-- 동기화 메소드
-    - wait(): 다른 스레드가 notify()를 불러줄 때까지 기다린다.
-    - notify(): wait()를 호출하여 대기중인 스레드를 깨운다.
-        - wait(), notify()는 Object의 메소드
-          
-## TCP/IP 소개
-- TCP/IP 프로토콜
-    - 두 시스템 간에 데이터가 손상없이 안전하게 전송되도록 하는 통신 프로토콜
-    - TCP에서 동작하는 응용프로그램 사례
-        - e-mail,FTP,웹(HTTP)등
-
-- TCP/IP 특징
-    - 연결형 통신
-        - 한 번 연결 후 계속 데이터 전송 가능
-    - 보낸 순서대로 받아 응용프로그램에게 전달
-
-## IP 주소
-- 네트워크 상에서 유일하게 식별될 수 있는 컴퓨터 주소
-    - 숫자로 구성된 주소
-    - 4개의 숫자가 '.'으로 연결
-        - ex) 192.156.11.15
-- 숫자로 된 주소는 기억하기 어려우므로 www.naver.com과 같은 문자열로 구성된 도메인 이름으로 바꿔 사용
-    - DNS(Domain Name System)
-        - 문자열로 구성된 도메인 이름을 숫자로 구성된 IP 주소로 자동 변환
-- 현재는 32비트의 IP 버전 4(IPv4)가 사용되고 있음
-    - IP 주소 고갈로 인해 128비트의 IP버전 6(IPv6)이 점점 사용되는 추세
-- 자신의 IP주소를 간단히 localhost라는 이름으로 사용 가능
-
-## 포트
-- 통신하는 프로그램 간에 가상의 연결단 포트 생성
-    - IP주소는 네트워크 상의 컴퓨터 또는 시스템을 식별하는 주소
-    - 포트 번호를 이용하여 통신할 응용프로그램 식별
-- 모든 응용프로그램은 하나 이상의 포트 생성 가능
-    - 포트를 이용하여 상대방 응용프로그램과 데이터 교환
-- 잘 알려진 포트(well-know-ports)
-    - 시스템이 사용하는 포트 번호
-    - 잘 알려진 응용프로그램에서 사용하는 포트 번호
-        - 0부터 1023 사이의 포트 번호
-        - ex) SSH 22, HTTP 80, FTP 21
-    - 잘 알려진 포트 번호는 개발자가 사용하지 않는 것이 좋음
-        - 충돌 가능성이 있음
-
-## 소켓 
-- TCP/IP 네트워크를 이용하여 쉽게 통신 프로그램을 작성하도록 지원 하는 기반 기술
-- 소켓
-    - 두 응용프로그램 간의 양방향 통신 링크의 한쪽 끝 단
-    - 소켓끼리 데이터를 주고 받음
-    - 소켓은 특정 IP 포트 번호와 결합
-- 자바로 소켓 동신할 수 있는 라이브러리 지원
-- 소켓 종류 : 서버 소켓과 클라이언트 소켓
-
-## Socket 클래스, 클라이언트 소켓
-- Socket 클래스
-    - 클라이언트 소켓에 사용되는 클래스
-    - java.net 패키지에 포함
-    - 생성자
-        - Socket()
-        - Socket(InetAddress address, int port)
-        - Socket(String host, int port)
-
-## 클라이언트에서 소켓으로 서버에 접속하는 코드
-- 클라이언트 소켓 생성 및 서버에 접속
-    - Socket의 생성자에서 128.12.1.1의 주소의 9999포트에 접속
-- 소켓으로부터 데이터를 전송할 입출력 스트림 생성
-    - BufferedReader in = new BufferedReader(
-    new InputStreamReader(clientSocket.getInputStream()));
-    -  BufferedWriter out = new BufferedWriter(
-    new OutputStreamWriter(clientSocket.getOutputStream()));
-- 서버로 데이터 전송
-    - flush()를 호출하면 스트림 속에 데이터 모두 전송
-        - out.write("hello"+"\n");
-        out.flush();
-- 서버로부터 데이터 수신
-    -  String line = in.readline(); 
-    //서버로부터 한행의문자열수신   
-- 네트워크 접속 종료
-    - clientSocket.close();
-
-## 서버에 클라이언트가 연결되는 과정
-- 서버는 서버 소켓으로 들어오는 연결 요청을 기다림(listen)
-- 클라이언트가 서버에게 연결 요청
-- 서버가 연결 요청 수락(accept)
-    - 새로운 클라이언트 소켓을 만들어 클라이언트와 통신하게 함
-    - 그리고 다시 다른 클라이언트의 연결을 기다림
-- 서버 소켓 생성
-    - ServerSocket serverSocket = new ServerSocket(9999);
-        - 서버는 9999포트에 접속 기다리는 포트로 9999선택
-- 클라이언트로부터 접속 기다림
-    - Socket socket = serverSocket.accept();
-        - accept() 메소드는 접속 요청이 오면 접속 후 새 Socket 객체 반환
-        - 접속 후 새로 만들어진 Socket 객체를 통해 클라이언트와 통신
-- 네트워크 입출력 스트림 생성   
-    - BufferedReader in = new BufferedReader(
-    new InputStreamReader(socket.getInputStream()));
-    -  BufferedWriter out = new BufferedWriter(
-    new OutputStreamWriter(socket.getOutputStream()));
-
-## 서버-클라이언트 채팅 프로그램 만들기
-- 간단한 채팅 프로그램
-    - 서버와 클라이언트가 1:1로 채팅
-    - 클라이언트와 서버가 서로 한번씩 번갈아 가면서 문자열 전송
-        - 문자열 끝에 "\n"을 덧붙여 보내고 라인 단위로 수신
-    - 클라이언트가 bye를 보내면 프로그램 종료
-    
+public class ContentPaneEx extends JFrame {
+    public ContentPaneEx() {
+        setTitle("ContentPane과 JFrame 예제"); 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        Container contentPane = getContentPane(); 
+        contentPane.setBackground(Color.ORANGE); 
+        contentPane.setLayout(new FlowLayout()); 
+            
+        contentPane.add(new JButton("OK")); 
+        contentPane.add(new JButton("Cancel")); 
+        contentPane.add(new JButton("Ignore")); 
+           
+        setSize(300, 150); 
+        setVisible(true); 
+        }
+    public static void main(String[] args) {
+        new ContentPaneEx();
+    }
+}
+
+~~~
+## 4월 19일  
+**메소드 오버라이딩**  
+* 메소드 오버라이딩  
+    * 서브 클래스에서 슈퍼 클래스의 메소드 중복 작성  
+    * 슈퍼 클래스의 메소드 무력화, 항상 서브 클래스에 오버라이딩한 메소드가 실행되도록 보장됨  
+
+**오버라이딩의 목적, 다형성 실현**  
+* 오버라이딩으로 다형성 실현  
+    * 하나의 인터페이스(같은 이름)에 서로 다른 구현  
+
+**추상 클래스**  
+* 추상 메소드  
+    * abstract로 선언된 메소드, 메소드의 코드는 없고 원형만 선언  
+* 추상 클래스  
+    * 추상 메소드를 가지며, abstract로 선언된 클래스  
+    * 추상 메소드 없이, abstract로 선언한 클래스  
+
+**추상 클래스의 상속과 구현**  
+* 추상 클래스 상속  
+    * 추상 클래스를 상속받으면 추상 클래스가 됨  
+    * 서브 클래스도 abstract로 선언해야 함  
+* 추상 클래스 구현  
+    * 서브 클래스에서 슈퍼 클래스의 추상 메소드 구현(오버라이딩)  
+    * 추상 클래스를 구현한 서브 클래스는 추상 클래스 아님  
+
+**추상 클래스의 목적**  
+* 추상 클래스의 목적  
+    * 상속을 위한 슈퍼 클래스를 활용하는 것  
+    * 서브 클래스에서 추상 메소드 구현  
+    * 다형성 실현  
+
+**자바의 인터페이스**  
+* 자바의 인터페이스  
+    * 클래스가 구현해야 할 메소드들이 선언되는 추상형  
+    * 인터페이스 선언  
+        * interface 키워드로 선언  
+
+**인터페이스의 상속**  
+* 인터페이스 간에 상속 가능  
+    * 인터페이스를 상속하여 확장된 인터페이스 작성 가능  
+    * 여러 개의 인터페이스 동시 구현 가능  
+
+**자바의 패키지와 모듈**  
+* 패키지  
+    * 서로 관련돤 클래스와 인터페이스를 컴파일한 클래스 파일들을 묶어 놓은 디렉터리  
+    * 하나의 응용프로그램은 한 개 이상의 패키지로 작성  
+    * 패키지는 jar 파일로 압축할 수 있음  
+
+* 모듈  
+    * 여러 패키지와 이미지 등의 저원을 모아 놓은 컨테이너  
+    * 하나의 모듈을 하나의 .jmod 파일에 저장  
+
+* java 9부터 모듈화 도입  
+    * 플랫폼의 모듈화  
+    * 응용프로그램의 모듈화  
+
+**자바의 모듈화의 목적**  
+* 모듈화의 목적  
+    * java 9부터 자바 API를 여러 모듈(99개)로 분할  
+    * 응용프로그램이 실행할 때 꼭 필요한 모듈들로만 실행 환경 구축  
+        * 메모리 자원이 열악한 작은 소형 기기에 꼭 필요한 모듈로 구성된 작은 크기의 실행 이미지를 만들기 위함  
+
+**패키지 사용하기, import문**  
+* 필요한 클래스만 import  
+    * 소스 시작 부분에 클래스의 경로명 import  
+    * import 패키지.클래스  
+    * 소스에는 클래스 명만 명시하면 됨  
+
+**패키지 만들기**  
+* 클래스 파일(.class)이 저장되는 위치는?  
+    * 클래스나 인터페이스가 컴파일되면 클래스 파일(.class)생성  
+    * 클래스 파일은 패키지로 선언된 디렉터리에 저장  
+* 패키지 선언  
+    * 소스 파일의 맨 앞에 컴파일 후 저장될 패키지 지정  
+
+**자바 모듈화의 목적**  
+* 가장 큰 목적  
+    * 자바 컴포넌트들을 필요에 따라 조립하여 사용하기 위함  
+    * 컴퓨터 시스템의 불필요한 부담 감소  
+
+**Object 클래스**  
+* 특징  
+    * 모든 자바 클래스는 반드시 Object를 상속받도록 자동 컴파일  
+        * 모든 클래스의 슈퍼 클래스  
+        * 모든 클래스가 상속받는 공통 메소드 포함  
+
+**Wrapper 클래스**  
+* Wrapper 클래스  
+    * 자바의 기본 타입을 클래스화한 8개 클래스를 통칭  
+        * Byte, Short, Integer, Long, Character, Float, Double, Boolean
+* 용도  
+    * 객체만 사용할 수 있는 컬렉션 등에 기본 타입의 값을 사용하기 위해 Wrapper 객체로 만들어 사용  
+
+**박싱과 언박싱**  
+* 박싱(boxing)
+    * 기본 타입과 값을 Wrapper 객체로 변환하는 것  
+* 언박싱(unboxing)
+    * Wrapper 객체에 들어 있는 기본 타입의 값을 빼내는 것  
+    * 박싱의 반대  
 
 
+## 4월 12일  
+**접근 지정자**  
+* 자바의 접근 지정자  
+    * private, protected, public, 디폴트(접근지정자 생략)  
+* 접근 지정자의 목적  
+    * 클래스나 일부 멤버를 공개하여 다른 클래스에서 접근하도록 허용  
+
+**클래스 접근 지정**  
+* 클래스 접근 지정  
+    * 다른 클래스에서 사용하도록 허용할 지 지정  
+    * public 클래스  
+        * 다른 모든 클래스에게 접근 허용  
+    * 디폴트 클래스(접근지정자 생략)  
+        * package-private라고도 함  
+        * 같은 패키지의 클래스에만 접근 허용  
+    
+**멤버 접근 지정**  
+* public 멤버  
+    * 패키지에 관계없이 모든 클래스에게 접근 허용  
+* private 멤버  
+    * 동일 클래스 내에만 접근 허용  
+    * 상속 받은 서브 클래스에서 접근 불가  
+* protected 멤버  
+    * 같은 패키지 내의 다른 모든 클래스 접근 허용
+* 디폴트(default)멤버      
+    * 패키지 내의 다른 클래스에게 접근 허용
+
+**static 멤버**  
+* static 멤버 선언  
+~~~ java
+class StaticSample {
+    int n;   // non-static 필드  
+    void g() // non-static 메소드
+
+    static int m;     // static 필드  
+    static void f();  // static 메소드
+} 
+~~~  
+* 객체 생성과 non-static 멤버의 생성  
+    * non-static 멤버는 객체가 생성될 때, 객체마다 생긴다.  
+
+**static 멤버의 생성**  
+* static 멤버는 클래스당 하나만 생성  
+* 객체들에 의해 공유됨
+
+**static 멤버 사용**  
+* 클래스 이름으로 접근 가능  
+~~~ java
+StaticSample.m = 3; // 클래스 이름으로 static 필드 접근
+StaticSample.f(); // 클래스 이름으로 static 메소드 호출
+~~~
+* 객체의 멤버로 접근 가능  
+~~~ java
+StaticSample b1 = new StaticSample();
+
+b1.m = 3; //객체 이름으로 static 필드 접근
+b1.f();   //객체 이름으로 static 메소드 호출
+~~~
+* non-static 멤버는 클래스 이름으로 접근 안 됨  
+~~~ java
+StaticSample.n  = 5;  //n은 non-static이므로 컴파일 오류
+StaticSample.g();     //g()는 non-static이므로 컴파일 오류
+~~~
+
+**static 메소드의 제약 조건 **  
+* static 메소드는 오직 static 멤버만 접근 가능  
+    * 객체가 생성되지 않은 상황에서도 static 메소드는 실행될 수 있기 때문에 non-static 멤버는 접근 불가능  
+* static 메소드는 this 사용불가  
+    * static 메소드는 객체 없이도 사용 가능하므로, this 레퍼런스 사용할 수 없음  
+
+**static 메소드 예시**
+~~~ java
+public class Ex4_11 {
+
+class Calc {
+    public static int abs(int a) {return a>0?a:-a;}
+    public static int max(int a, int b) {return (a>b)?a:b;}
+    public static int min(int a, int b) {return (a>b)?b:a;}
+    }
+
+public class CalcEx {
+    public static void main(String[] args) {
+        System.out.println(Calc.abs(-5));
+        System.out.println(Calc.max(10,8));
+        System.out.println(Calc.min(-3,-8));
+        }
+    }
+}
+
+~~~
+
+**final 클래스와 메소드**  
+* final 클래스 - 더 이상 클래스 상속 불가능  
+~~~ java
+final class FinalClass {
+}
+class DerivedClass extends FinalClass { //컴파일 오류
+
+}
+~~~
+* final 메소드 - 더 이상 오버라이딩 불가능  
+~~~ java
+public class SuperClass {
+    protected final int finalMetohd()(...)
+}
+class SubClass extends SuperClass {
+    protected int finalMethod()(...) //컴파일 오류
+}
+~~~
+
+* final 필드, 상수 선언  
+    * 상수를 선언할 때 사용
+    ~~~ java
+    class SharedClass {
+        public static final double Pi = 3.14;
+    }
+    ~~~
+    * 상수 필드는 선언 시에 초기 값을 지정하여야 한다  
+    * 상수 필드는 실행 중에 값을 변경할 수 없다
+    ~~~ java
+    public class FinalFieldClass {
+        final int ROWS = 10; //상수 정의, 이때 초기 값(10)을 반드시 실행
+        void f() {
+            int[]intArray = new int [ROWS];//상수 활용
+            ROWS = 30; //컴파일 오류 발생. final 필드 값을 변경할 수 없다.
+        }
+    }
+    ~~~
+
+**자바 상속의 특징**  
+* 클래스 다중 상속 불허  
+    * c++는 다중 상속 가능  
+        * c++는 다중 상속으로 멤버가 중복 생성되는 문제 있음  
+
+**자바 상속 extends 예시**  
+~~~ java
+class Point {
+    private int x,y;
+    public void set(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+    public void showPoint(){
+        System.out.println("(" + x + ","+ y +")");
+    }
+}
+
+class ColorPoint extends Point {
+    private String color;
+    public void setColor(String color){
+        this.color = color;
+    }
+    public void showColorPoint() {
+        System.out.print(color);
+        showPoint();
+    }
+}
+
+public class Ex5_01 {
+    public static void main(String[] args) {
+        Point p = new Point();
+        p.set(1, 2);
+        p.showPoint();
+
+        ColorPoint cp = new ColorPoint();
+        cp.set(3, 4);
+        cp.setColor("red");
+        cp.showColorPoint();
+    }
+}
+
+~~~
+
+**서브 클래스와 슈퍼 클래스의 생성자 선택**  
+* 슈퍼 클래스와 서브 클래스  
+    * 각각 여러 개의 생성자 작성 가능  
+* 서브 클래스의 객체가 생성될 때  
+    * 슈퍼 클래스 생성자 1개와 서브 클래스 생성자 1개가 실행  
+* 서브 클래스의 생성자와 슈퍼 클래스의 생성자가 결정되는 방식  
+    1. 개발자의 명시적 선택  
+        * 서브 클래스 개발자가 슈퍼 클래스의 생성자를 선택하지 않는 경우  
+        * super()키워드를 이용하여 선택
+    2. 컴파일러가 기본생성자 선택  
+        * 서브 클래스 개발자가 슈퍼 클래스의 생성자를 선택하지 않는 경우  
+        * 컴파일러가 자동으로 슈퍼 클래스의 기본 생성자 선택
+
+**업캐스팅**  
+* 서브 클래스 레퍼런스를 슈퍼 클래스 레퍼런스에 대입  
+
+**다운캐스팅**  
+* 슈퍼 클래스 레퍼런스를 서브 클래스 레퍼런스에 대입  
+* 업캐스팅 된 것을 다시 원래대로 되돌리는 것  
+* 반드시 명시적 타입 변환 지정  
+~~~ java
+class Person()
+class Student extends Person()
+
+Person p = new Student("ㄱㄱㄱ") //업캐스팅
+Student = (Student)p;//다운캐스팅
+~~~
 
 
-    ColorPoint cp = new ColorPoint(); // 서브 클래스 객체 생성
+## 4월 5일  
+**2차원 배열**  
+* 2차원 배열 선언  
+    int intArray[][]; 또는 int[][] intArray;  
+
+**메소드의 배열 리턴**  
+* 배열 리턴  
+    * 배열의 레퍼런스만 리턴(배열 전체가 리턴되는 것이 아님)  
+* 메소드의 리턴 타입  
+    * 리턴하는 배열 타입과 리턴 받는 배열 타입 일치  
+    * 리턴 타입에 배열의 크기를 지정하지 않음  
+
+**자바의 예외 처리**  
+* 예외  
+    * 실행 중 오동작이나 결과에 악영향을 미치는 변수 발생  
+**try-catch-finally문**  
+* 예외 처리  
+    * 발생한 예외에 대해 개발자가 작성한 프로그램 코드에서 대응하는 것  
+    * try-catch-finally문 사용(finally 블록은 생략 가능)  
+~~~ java    
+    try {
+        (실행문)
+    }
+    catch(처리할 예외 타입선언){
+        예외 처리문
+    }
+    finally
+        finally 블록문
+~~~
+
+**나눗셈을 할때의 예외 처리문** 
+~~~ java
+import java.util.Scanner;
+
+public class Ex3_13 {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int dividend;
+        int divisor;
+
+        System.out.print("나뉨수를 입력하시오");
+        dividend  = scanner.nextInt();
+        System.out.print("나눗수를 입력하시오");
+        divisor = scanner.nextInt();
+        try {
+            System.out.println(dividend+"를 " +divisor + "로 나누면 몫은 " + dividend/divisor + "입니다.");
+        }
+        catch(ArithmeticException e) {
+                System.out.println("0으로 나눌 수 없습니다.");
+        }
+        finally {
+            scanner.close();
+        }
+    }
+}
+~~~  
+**자바 상속**  
+* 자바 상속  
+    * 상위 클래스의 멤버를 하위 클래스가 물려받음  
+        * 상위 클래스: 슈퍼 클래스  
+        * 하위 클래스: 서브 클래스, 슈퍼 클래스의 재사용, 새로운 특성 추가 기능  
+
+**다형성**  
+* 다형성  
+    * 같은 이름의 메소드가 클래스 혹은 객체에 따라 다르게 구현되는 것  
+
+**다형성 사례**   
+* 메소드 오버로딩 : 한 클래스 내에서 같은 이름이지만 다르게 작동하는 여러 메소드  
+* 메소드 오버라이딩 : 슈퍼 클래스의 메소드를 동일한 이름으로 서브 클래스마다 다르게 구현  
+
+**객체 지향 언어의 목적**  
+1. 소프트웨어의 생산성 향상  
+    * 컴퓨터 산업 발전에 따라 소프트웨어의 생명 주기 단축  
+        * 소프트웨어를 빠른 속도로 생산할 필요성 증대  
+    * 객체 지향 언어  
+2. 실세계에 대한 쉬운 모델링  
+
+**클래스와 객체**  
+* 클래스  
+    * 객체의 속성과 행위 선언  
+    * 객체의 설계도 혹은 틀  
+* 객체  
+    * 클래스의 틀로 찍어낸 실체  
+        * 프로그램 실행 중에 생성되는 실체  
+        * 메모리 공간을 갖는 구체적인 실체  
+        * 인스턴스 라고도 부름  
+
+**자바 클래스 구성**  
+* 클래스  
+    * class 키워드로 선언  
+    * 멤버 : 클래스 구성 요소  
+    * 클래스에 대한 public 접근 지정 : 다른 모든 클래스에서 클래스 사용 허락  
+    * 멤버에 대한 public 접근 지정 : 다른 모든 클래스에게 멤버 접근 허용  
+
+**클래스를 이용한 사각형 넓이 구하기**
+~~~ java 
+import java.util.Scanner;
+
+public class Ex4_02 {
+    public static void main(String[] args) {
+    Rectangle rect = new Rectangle(); 
+    Scanner scanner= new Scanner(System.in);
+    System.out.print(">> 사각형의 가로 길이");
+    rect.width = scanner.nextInt();
+    System.out.print(">> 사각형의 세로 길이");
+    rect.height = scanner.nextInt(); 
+    System.out.println("사각형의 면적은 " + rect.getArea());
+    scanner.close();
+    }
+}
+
+class Rectangle {
+    int width;
+    int height;
+    public int getArea() {
+        return width*height;
+    }
+}
+~~~
+
+**메소드**  
+* 메소드는 C/C++의 함수와 동일  
+* 자바의 모든 메소드는 반드시 클래스 안에 있어야 함 (캡슐화 원칙)  
+
+**메소드 오버로딩**  
+* 오버로딩  
+    * 한 클래스 내에서 두 개 이상의 이름이 같은 메소드 작성
+
+**객체 소멸**  
+* 객체 소멸  
+    * new에 의해 할당 받은 객체와 배열 메모리를 자바 가상 기계로 되돌려 주는 행위  
+    * 소멸된 객체 공간은 가용 메모리에 포함  
+* 자바에서 사용자 임의로 객체 소멸이 안된다.  
+    * 자바는 객체 소멸 연산자 없음  
+        * 객체 생성 연산자 : new  
+    * 객체 소멸은 자바 가상 기계의 고유한 역할  
+
+**가비지**  
+* 가비지  
+    * 가리키는 레퍼런스가 하나도 없는 객체  
+        * 더 이상 접근할 수 없어 사용할 수 없게 된 메모리  
+    * 가비지 컬렉션  
+        * 자바 가상 기계의 가비지 컬렉터가 자동으로 가비지 수집, 반환  
+
+**가비지 컬렉션** 
+* 가비지 컬렉션  
+    * 자바 가상 기계가 가비지 자동 회수  
+        * 가용 메모리 공간이 일정 이하로 부족해질 때  
+        * 가비지를 수거하여 가용 메모리 공간으로 확보  
+    * 가비지 컬렉터에 의해 자동 수행  
+* 강제 가비지 컬렉션 강제 수행  
+    * System 또는 Runtime 객체의 gc() 메소드 호출  
+        System.gc();  
+
+**자바의 패키지 개념**  
+* 패키지  
+    * 상호 관련 있는 클래스 파일(컴파일 된 .class)을 저장하여 관리하는 디렉터리  
+    * 자바 응용프로그램은 하나 이상의 패키지로 구성  
+
+## 3월 29일   
+**실수 리터럴**  
+* 소수점 형태나 지수 형태로 표현한 실수  
+  
+**문자 리터럴**  
+* 단일 인용부호('')로 문자 표현  
+* 특수문자 리터럴은 백슬래시(\\)로 표현  
+
+**기본 타입 이외 리터럴**  
+* null 리터럴  
+    * 레퍼런스에 대입 사용  
+  
+* 문자열 리터럴(스트링 리터럴)  
+    * 이중 인용부호로 묶어 표현("")  
+
+**상수**  
+* 상수 선언  
+    * final 키워드 사용  
+    * 선언 시 초기값 지정  
+    * 실행 중 값 변경 불가  
+
+**var 키워드**  
+* java 10부터 도입  
+* 기존의 변수 선언 방식 : 변수의 타입 반드시 지정  
+    int price = 200;  
+    String name = "kitae";  
+* var 키워드  
+    * 타입을 생략하고 변수 선언 가능  
+    * 컴파일러가 추론하여 변수 타입 결정    
+    * 변수 선언 시 초기값이 주어지지 않으면 컴파일 오류  
+    * var는 지역 변수 선언에만 한정  
+
+**타입 변환**  
+* 타입 변환  
+    * 한 타입의 값을 다른 타입의 값으로 변환  
+* 자동 타입 변환  
+    * 컴파일러에 의해 원래의 타입보다 큰 타입으로 자동 변환  
+
+**강제 타입 변환**
+* 개발자의 의도적 타입 변환  
+* ()안에 개발자가 명시적으로 타입 변환 지정
+    int n = 300;  
+    byte b = n; // int 타입이 byte로 자동 변환 안 됨  
+    (byte b = (byte)n)으로 수정
+* 강제 변환 시 값 손실 우려가 있음  
+
+**Scanner 클래스**  
+* 읽은 바이트를 문자, 정수, 실수, 불린, 문자열 등 다양한 타입으로 변환하여 리턴  
+    * java.util.Scanner  
+* 객체 생성  
+    import java.util.Scanner; // 임포트 문 필요  
+    Scanner a = new Scanner(System.in) Scanner 객체 생성  
+
+**증감 연산**  
+* 1 증가 혹은 감소 시키는 연산  
+    * ++, --  
+
+**비교 연산, 논리 연산**  
+* 비교 연산자: 두 개의 값을 비교하여 true/false/ 결과  (a>b, a<b, a=b 등) 
+* 논리 연산자: 두 개의 논리 값에 논리 연산, 논리 결과(!a, a^b 등)  
+
+**조건 연산**  
+* 3개의 피연산자로 구성된 삼항(ternary)연산자  
+    * opr1?opr2:opr3  
+    * opr1이 true이면 연산식의 결과는 opr2, false이면 opr3  
+
+**조건문 - 단순 if 문, if else 문**   
+* 단순 if문 - if의 괄호 안에 조건식(논리형 변수나 논리 연산)  
+    if(n%2 == 0)  {  
+        System.out.print(n);  
+        System.out.println("은 짝수입니다.");
+}  
+* if-else 문 - 조건식이 true면 실행문장1, false이면 실행문장2 실행  
+    if(score >= 90)  
+        System.out.println("합격입니다.");  
+    else  
+        System.out.println("합격입니다."); 
+
+**if, else if와 Scanner로 월 입력에 따른 계절 출력**   
+~~~java  
+import java.util.Scanner;
+public class Season {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("월(1 ~ 12)을 입력하시오");
+        int month = scanner.nextInt();
+
+        if(month < 6 && month > 2){
+            System.out.println("봄입니다.");
+        }
+        else if(month < 9 && month > 5){
+            System.out.println("여름입니다.");
+        }
+        else if(month < 12 && month > 8){
+            System.out.println("가을입니다.");
+        }
+        else if(month > 12){
+            System.out.println("잘못된 입력입니다.");
+        }
+        else{
+            System.out.println("겨울입니다.");
+        }
+        scanner.close();
+    }
+}  
+~~~  
+**for 문을 활용해 구구단 출력**
+~~~ java  
+public class Ex3_4 {
+
+    public static void main(String[] args) {
+        
+        for(int i = 1; i < 10; i++){
+            for(int j = 1; j < 10; j++){
+                System.out.print(i + "x" + j + "=" + i*j);
+                System.out.print('\t');
+            }
+            System.out.println();
+        }
+    }
+}
+~~~
+**자바 배열**  
+* 배열
+    * 인덱스와 인덱스에 대응하는 데이터들로 이루어진 자료 구조  
+        * 배열을 이용하면 한 번에 많은 메모리 공간 선언 가능  
+    * 배열은 같은 타입의 데이터들이 순차적으로 저장되는 공간 이다.    
+
+**배열 선언 및 생성 디테일**  
+* 배열 선언과 배열 생성의 두 단계 필요  
+* 배열 선언  
+    * 배열의 이름 선언(배열 레퍼런스 변수 선언)  
+    int intArray []; 또는 int[] intArray;  
+* 배열 인덱스  
+    * 배열의 인덱스는 0 ~ (배열 크기는 1)  
+    int intArray = new int[5]; //인덱스는 0~4까지 가능  
+    intArray[0] = 5;  // 원소 0에 5 저장  
+    intArray[3] = 6; // 원소 3에 6 저장  
+    int n = intArray[3];  // n의 값을 원소 3의 값으로 저장  
+
+## 3월 22일
+**자바의 플랫폼 독립성, WORA**    
+* 한번 작성된 코드는 모든 플랫폼에서 바로 실행됨  
+* C/C++ 등 기존 언어가 가진 플랫폼 종속성 극복  
+    * OS,H/W에 상관없이 자바 프로그램이 동일 실행  
+* 네트워크에 연결된 어느 클라이언트에서나 실행
+
+**실행 환경**  
+자바 가상 기계 + 자바 플랫폼의 다양한 클래스 라이브러리(자바API)
+
+**JDK**  
+    자바 응용 개발 환경, 개발에 필요한 도구 포함
+
+**JRE**  
+   자바 실행 환경
+
+**JDK의 bin 디렉터리에 포함된 주요 개발 도구**  
+* javac - 자바 소스를 바이트 코드로 변환하는 컴파일러  
+* java  
+* jar  
+* jdb
+    
+**자바 통합 개발 환경** 이클립스
+
+**자바 응용의 종류 :** 서블릿    
+서블릿  
+* 웹 서버에서 실행되는 자바 프로그램
+
+자바의 특성  
+* 플랫폼 독립성  
+    * 하드웨어, 운영체제에 종속되지 않는 바이트 코드로 플랫폼 독립성
+* 객체지향  
+    * 캡슐화, 상속, 다형성 지원
+* 클래스로 캡슐화  
+    * 자바의 모든 변수나 함수는 클래스내에 선언  
+    * 클래스 안에서 클래스(내부 클래스) 작성 가능
+* 소스(.java)와 클래스(.class) 파일
+
+**자바의 특징** 
+* 실행 코드 배포   
+    * 구성  
+        * 한 개의 class 파일 또는 다수의 class 파일로 구성  
+        * 여러 폴더에 걸쳐 다수의 클래스 파일로 구성된 경우 : jar 압축 파일로 배포  
+    * 자바 응용프로그램의 실행은 main() 메소드에서 시작  
+        * 하나의 클래스 파일에 두 개 이상의 main() 메소드가 있을 수 없음
+* 패키지  
+    * 서로 관련 있는 여러 클래스를 패키지로 묶어 관리  
+    * 패키지는 폴더 개념
+* 멀티스레드  
+* 가비지 컬렉션
+* 실시간 응용프로그램에 부적합  
+    * 실행 도중 예측할 수 없는 시점에 가비지 컬렉션 실행 때문  
+        * 응용프로그램의 일시적 중단 발생  
+* 자바 프로그램은 안전  
+    * 타입 체크 엄격  
+    * 물리적 주소를 사용하는 포인터 개념 없음
+* 프로그램 작성 쉬움  
+    * 포인터 개념이 없음
+    * 동적 메모리 반환 하지 않음  
+    * 다양한 라이브러리 지원
+* 실행 속도 개선을 위한 JIT 컴파일러 사용  
+    * 자바는 바이트 코드를 인터프리터 방식으로 실행  
+    * JIT 컴파일 기법으로 실행 속도 개선  
+
+**식별자**  
+* 클래스, 변수, 상수, 메소드 등에 붙히는 이름  
+    * 식별자의 원칙  
+        * @ # ! 와 같은 특수 문자, 공백, 또는 탭은 식별자로 사용할 수 없으나 _ $ 는 사용 가능  
+        * 유니코드 나 한글 사용 가능  
+
+**문자열**  
+* 문자열은 기본 타입이 아님  
+* String 클래스로 문자열 표현   
+  
+**리터럴과 정수 리터럴**  
+* 리터럴
+    * 프로그램에서 직접 표현한 값  
+* 정수 리터럴  
+    * 10진수, 8진수, 16진수, 2진수 리터럴
 
 
-
+## 3월 15일
+수정된 내용이 있다면 커밋을 할 수 있다.커밋을 할 때에는 간단한 내용을 적는다.
